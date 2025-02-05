@@ -21,3 +21,13 @@
     background-color: #E1DAE2;
   }
 
+  .cbg{
+    background-color: #242222;
+  }
+
+  @media (min-width: 0px) and (max-width: 369px) {
+    .sgrid {
+        grid-column: 1;
+    }
+  }
+

@@ -32,7 +32,7 @@ const BannerCarousel = () => {
         onClick={handleImageClick} 
         src={images[currentIndex]}
         alt="Banner"
-        className="w-full h-[98%] object-cover transition-opacity duration-1000 ease-in-out"
+        className="w-full object-cover transition-opacity duration-1000 ease-in-out"
       />
     </div>
   );

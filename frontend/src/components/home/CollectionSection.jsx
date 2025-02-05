@@ -46,6 +46,7 @@ const CollectionSection = () => {
         <Swiper
           modules={[Navigation, Pagination]}
           //spaceBetween={30}
+          arrow
           loop={true}
           pagination={false}
           breakpoints={{

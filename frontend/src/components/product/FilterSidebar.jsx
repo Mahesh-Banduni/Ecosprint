@@ -1,105 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { ChevronDown, Filter, X, ChevronUp } from 'lucide-react';
-import { useProducts } from '../../hooks/useProducts';
+import useProducts from '../../hooks/useProducts';
 import { setFilters } from '../../store/productSlice';
 import PriceRangeSlider from './PriceRangeSlider';
 
 const FilterSidebar = ({ isOpen, onClose }) => {
+  const { fetchProducts, currentFilters, localFilters, expandedSections, filterCategories, toggleSection, handleFilterChange, handlePriceChange, applyFilters, resetFilters} = useProducts();
+
   const dispatch = useDispatch();
-  const { fetchProducts } = useProducts();
-  const currentFilters = useSelector(state => state.products.filters);
-  const [localFilters, setLocalFilters] = useState({
-    category: [],
-    gender: [],
-    brand: [],
-    material: [],
-    color: [],
-    occasion: [],
-    season: [],
-    priceRange: [0, 10000]
-  });
-
-  // Expanded sections state
-  const [expandedSections, setExpandedSections] = useState({
-    category: true,
-    gender: true,
-    brand: true,
-    material: true,
-    color: true,
-    occasion: true,
-    season: true,
-    price: true
-  });
-
-  // Filter categories (same as before)
-  const filterCategories = {
-    category: ['Sneakers', 'Loafers', 'Oxford', 'Slip-ons', 'Boots', 'Sandals'],
-    gender: ['Men', 'Women', 'Kids', 'Unisex'],
-    brand: ['Nike', 'Adidas', 'Puma', 'Reebok', 'Vans'],
-    material: ['Leather', 'Canvas', 'Mesh', 'Suede', 'Synthetic'],
-    color: ['Black', 'Brown', 'White', 'Blue', 'Red', 'Green'],
-    occasion: ['Casual', 'Formal', 'Sports', 'Party', 'Beach'],
-    season: ['Summer', 'Winter', 'Monsoon', 'All Season']
-  };
-
-  // Toggle section expand
-  const toggleSection = (section) => {
-    setExpandedSections(prev => ({
-      ...prev,
-      [section]: !prev[section]
-    }));
-  };
-
-  // Handle checkbox filter change
-  const handleFilterChange = (category, value) => {
-    const currentFilterList = localFilters[category] || [];
-    const newFilterList = currentFilterList.includes(value)
-      ? currentFilterList.filter(item => item !== value)
-      : [...currentFilterList, value];
-
-    const updatedFilters = {
-      ...localFilters,
-      [category]: newFilterList
-    };
-
-    setLocalFilters(updatedFilters);
-  };
-
-  // Handle price range change
-  const handlePriceChange = (value) => {
-    setLocalFilters(prev => ({
-      ...prev,
-      priceRange: value
-    }));
-  };
-
-  // Apply filters
-  const applyFilters = () => {
-    dispatch(setFilters(localFilters));
-    fetchProducts(localFilters);
-    onClose();
-  };
-
-  // Reset all filters
-  const resetFilters = () => {
-    const resetState = {
-      category: [],
-      gender: [],
-      brand: [],
-      material: [],
-      color: [],
-      occasion: [],
-      season: [],
-      priceRange: [0, 10000]
-    };
-
-    setLocalFilters(resetState);
-    dispatch(setFilters(resetState));
-    fetchProducts(resetState);
-    onClose();
-  };
-
   return (
     <>
       {/* Mobile overlay */}
@@ -172,7 +81,7 @@ const FilterSidebar = ({ isOpen, onClose }) => {
                   >
                     <input
                       type="checkbox"
-                      className="form-checkbox h-4 w-4 text-blue-600 rounded"
+                      className="form-checkbox h-4 w-4 text-emerald-600 rounded"
                       checked={localFilters[category].includes(option)}
                       onChange={() => handleFilterChange(category, option)}
                     />
@@ -188,7 +97,7 @@ const FilterSidebar = ({ isOpen, onClose }) => {
         <div className="flex space-x-4 mt-6">
           <button
             onClick={applyFilters}
-            className="flex-1 bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition"
+            className="flex-1 bg-emerald-600 text-white py-2 rounded-md hover:bg-emerald-700 transition"
           >
             Apply Filters
           </button>
