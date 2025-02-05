@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { useProducts } from '../..//hooks/useProducts';
+import useProducts from '../../hooks/useProducts';
 import { Star, Filter, X } from 'lucide-react';
 
 const ProductCard = ({ product }) => {

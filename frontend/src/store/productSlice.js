@@ -11,6 +11,7 @@ const initialState = {
     occasion: [],
     season: [],
     priceRange: { min: 0, max: 0 },
+    searchQuery: '',
     sortBy: 'newest'
   },
   loading: false,

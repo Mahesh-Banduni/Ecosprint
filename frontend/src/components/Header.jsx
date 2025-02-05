@@ -1,15 +1,26 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { IoSearch } from 'react-icons/io5';
 import { CgProfile } from 'react-icons/cg';
 import { Menu, X, ChevronDown } from 'lucide-react';
 import { logo } from '../utils/icons';
+
+
+import { useSelector, useDispatch } from 'react-redux';
+import { setFilters } from '../store/productSlice';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const profileDropdownRef = useRef(null);
+  const dispatch=useDispatch();
+  const navigate = useNavigate();
+
+  const handleSearchClick = () => {
+    fetchProducts(setFilters);
+    navigate(`/products`);
+  };
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -67,11 +78,12 @@ const Header = () => {
         <div className="hidden md:flex items-center justify-center flex-grow mx-8 max-w-xl">
           <div className="flex items-center w-full border border-gray-300 rounded-md px-3 py-2">
             <input 
+              onChange={(e) => dispatch(setFilters({ searchQuery: e.target.value }))}
               type="text" 
               placeholder="Search..." 
               className="w-full outline-none text-sm"
             />
-            <IoSearch className="text-gray-500 ml-2" />
+            <IoSearch onClick={handleSearchClick} className="text-gray-500 ml-2" />
           </div>
         </div>
 
@@ -99,7 +111,7 @@ const Header = () => {
             </button>
             </div>
             {isProfileDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg py-1">
+              <div className="absolute right-[3%] mt-40 w-48 bg-white border rounded-md shadow-lg py-1">
                 <Link 
                   to="/profile" 
                   className="block px-4 py-2 hover:bg-gray-100"
@@ -129,10 +141,11 @@ const Header = () => {
           <div className="flex items-center border border-gray-300 rounded-md px-3 py-2">
             <input 
               type="text" 
+              onChange={(e) => dispatch(setFilters({ searchQuery: e.target.value }))}
               placeholder="Search..." 
               className="w-full outline-none text-sm"
             />
-            <IoSearch className="text-gray-500 ml-2" />
+            <IoSearch onClick={handleSearchClick} className="text-gray-500 ml-2" />
           </div>
         </div>
       )}
