@@ -58,14 +58,13 @@
 
 import React from 'react'
 import Header from './components/Header'
-import Home from './pages/Home';
+import { Outlet } from "react-router-dom";
 
 const App = () => {
-  const user="Sarthak";
   return (
     <>
     <Header></Header>
-    <Home></Home>
+    <Outlet></Outlet>
     </>
   )
 }

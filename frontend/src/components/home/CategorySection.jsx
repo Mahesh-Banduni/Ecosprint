@@ -83,7 +83,7 @@ const CategorySection = () => {
               slidesPerView: 2,
             },
             280: {
-              slidesPerView: 1,
+              slidesPerView: 2,
             },
           }}
         >
