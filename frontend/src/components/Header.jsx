@@ -1,115 +1,193 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Link, NavLink } from "react-router-dom";
-import { GiShoppingCart } from "react-icons/gi";
-import { IoSearch } from "react-icons/io5";
-import { CgProfile } from "react-icons/cg";
-import { Menu, X } from "lucide-react";
-import { logo } from "../utils/icons";
+import React, { useState, useRef, useEffect } from 'react';
+import { Link, NavLink } from 'react-router-dom';
+import { IoSearch } from 'react-icons/io5';
+import { CgProfile } from 'react-icons/cg';
+import { Menu, X, ChevronDown } from 'lucide-react';
+import { logo } from '../utils/icons';
 
 const Header = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [token, setToken] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const profileDropdownRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target)) {
+        setIsProfileDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const toggleSearch = () => {
+    setIsSearchOpen(!isSearchOpen);
+  };
+
+  const toggleProfileDropdown = () => {
+    setIsProfileDropdownOpen(!isProfileDropdownOpen);
+  };
 
   return (
-    <>
-    <nav className="w-full bg-white p-4">
-      <div className="max-w-7xl mx-auto flex items-center justify-between sm: gap-2 mb-4">
-        <button className="md:hidden text-black" onClick={() => setIsOpen(!isOpen)}>
-          {isOpen ? <X size={28} /> : <Menu size={28} />}
-        </button>
-        <div>
-          <Link>
-           <div className="inline-flex gap-1 items-center">
-            <img className="w-20 h-12 max-sm:w-16 pt-2 max-sm:h-10" src={logo} alt="" />
-            <h2 className=" sm:text-1xl md:text-2xl lg:text-3xl xl:text-4xl text-emerald-950 font-bold uppercase">Ecosprint</h2>
-            </div>
+    <nav className="sticky top-0 z-50 bg-white shadow-md">
+      {/* Top Navigation Section */}
+      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+        {/* Mobile Menu Toggle */}
+        <div className="flex items-center md:hidden">
+          <button 
+            onClick={toggleMenu} 
+            className="text-gray-700 focus:outline-none mr-2"
+          >
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+
+        {/* Logo */}
+        <div className="flex items-center">
+          <Link to="/" className="flex items-center">
+            <img 
+              src={logo} 
+              alt="Logo" 
+              className="h-10 w-auto mr-2 max-sm:h-8"
+            />
+            <h1 className="lg:text-2xl md:text-2xl font-bold text-emerald-950 sm:text-xl uppercase">Ecosprint</h1>
           </Link>
         </div>
-        <div className="flex items-center gap-2 px-2 py-1 border border-black rounded-md w-96 bg-white max-sm:w-72 max-[500px]:w-52">
-          <input
-            type="text"
-            placeholder="Search..."
-            className="outline-none border-none font-poppinsLight w-full max-sm:text-sm"
-          />
-          <IoSearch className="w-6 h-6 text-slate-950 max-sm:w-5 max-sm:h-5" />
+
+        {/* Search Bar (Desktop) */}
+        <div className="hidden md:flex items-center justify-center flex-grow mx-8 max-w-xl">
+          <div className="flex items-center w-full border border-gray-300 rounded-md px-3 py-2">
+            <input 
+              type="text" 
+              placeholder="Search..." 
+              className="w-full outline-none text-sm"
+            />
+            <IoSearch className="text-gray-500 ml-2" />
+          </div>
         </div>
-        <div className="navbar-end w-fit flex items-center justify-end basis-1 shrink max-sm:pr-5">
-      
-          {/* {!token ? (
-           
-          ) : (
-            <div className="flex gap-5 items-center max-sm:gap-2">
-              <Link to="/wishlist" className="flex flex-col items-center">
-                <img className="w-5" src={heart} alt="" />
-              </Link>
+
+        <div className=' flex justify-end items-center gap-2'>
+        {/* Mobile Search Toggle */}
+        <div className="md:hidden  mt-2">
+          <button 
+            onClick={toggleSearch} 
+            className="text-gray-700 focus:outline-none"
+          >
+            <IoSearch size={25} />
+          </button>
+        </div>
+
+        {/* Right Side Icons */}
+        <div className="flex items-center space-x-4">
+          {/* Profile Dropdown */}
+          <div className="relative" ref={profileDropdownRef}>
+            <button 
+              onClick={toggleProfileDropdown} 
+              className="flex items-center text-gray-700 focus:outline-none"
+            >
+              <CgProfile size={24} className='sm:mr-5 sm:ml-3 md:mr-5' />
+              {/* <ChevronDown size={16} className="ml-1" /> */}
+            </button>
             </div>
-          )} */}
+            {isProfileDropdownOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg py-1">
+                <Link 
+                  to="/profile" 
+                  className="block px-4 py-2 hover:bg-gray-100"
+                >
+                  My Profile
+                </Link>
+                <Link 
+                  to="/settings" 
+                  className="block px-4 py-2 hover:bg-gray-100"
+                >
+                  Settings
+                </Link>
+                <button 
+                  className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                >
+                  Logout
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
-      <hr></hr>
-     
-      {isOpen && (
-        <div className="menu-sm dropdown-content flex flex-col items-start bg-white text-black w-1/2 p-4 ml-4 space-y-4 shadow rounded-box z-[1]">
-          <ul>
-          <li className="bg-transparent">
-                <NavLink
-                  to={"/"}
-                  className={({ isActive }) =>
-                    isActive
-                      ? " border-b-2 text-xl border-none text-primary-color "
-                      : " text-black text-xl border-none hover:border-b-2 hover:text-primary-color "
-                  }
-                >
-                  Home
-                </NavLink>
-              </li>
-              <li className="bg-transparent">
-                <NavLink
-                  to={"/"}
-                  className={({ isActive }) =>
-                    isActive
-                      ? " border-b-2 text-xl border-none text-primary-color "
-                      : " text-black text-xl border-none hover:border-b-2 hover:text-primary-color "
-                  }
-                >
-                  Home
-                </NavLink>
-              </li>
-              <li className="bg-transparent">
-                <NavLink
-                  to={"/"}
-                  className={({ isActive }) =>
-                    isActive
-                      ? " border-b-2 text-xl border-none text-primary-color "
-                      : " text-black text-xl border-none hover:border-b-2 hover:text-primary-color "
-                  }
-                >
-                  Home
-                </NavLink>
-              </li>
-              <li className="bg-transparent">
-                <NavLink
-                  to={"/"}
-                  className={({ isActive }) =>
-                    isActive
-                      ? " border-b-2 text-xl border-none text-primary-color "
-                      : " text-black text-xl border-none hover:border-b-2 hover:text-primary-color "
-                  }
-                >
-                  Home
-                </NavLink>
-              </li>
-          </ul>
-          {/* <h4 className="text-xl">About</h4>
-          <h4 className="text-xl">Service</h4>
-          <h4 className="text-xl">Collection</h4>
-          <h4 className="text-xl">Contact</h4> */}
+
+      {/* Mobile Search Bar */}
+      {isSearchOpen && (
+        <div className="md:hidden px-4 pb-3">
+          <div className="flex items-center border border-gray-300 rounded-md px-3 py-2">
+            <input 
+              type="text" 
+              placeholder="Search..." 
+              className="w-full outline-none text-sm"
+            />
+            <IoSearch className="text-gray-500 ml-2" />
+          </div>
         </div>
       )}
-      
+
+      {/* Navigation Menu */}
+      <div className={`
+        ${isMenuOpen ? 'block' : 'hidden'} 
+        md:block bg-white border-t
+      `}>
+        <div className="max-w-7xl mx-auto px-4 py-2">
+          <div className="flex flex-col lg:items-center justify-center md:flex-row space-y-2 md:space-y-0 md:space-x-6">
+            <NavLink 
+              to="/" 
+              className={({ isActive }) => 
+                `text-gray-700 hover:text-emerald-600 ${
+                  isActive ? 'text-emerald-700 font-semibold' : ''
+                }`
+              }
+            >
+              Home
+            </NavLink>
+            <NavLink 
+              to="/about" 
+              className={({ isActive }) => 
+                `text-gray-700 hover:text-emerald-600 ${
+                  isActive ? 'text-emerald-700 font-semibold' : ''
+                }`
+              }
+            >
+              About
+            </NavLink>
+            <NavLink 
+              to="/products" 
+              className={({ isActive }) => 
+                `text-gray-700 hover:text-emerald-600 ${
+                  isActive ? 'text-emerald-700 font-semibold' : ''
+                }`
+              }
+            >
+              Products
+            </NavLink>
+            <NavLink 
+              to="/contact" 
+              className={({ isActive }) => 
+                `text-gray-700 hover:text-emerald-600 ${
+                  isActive ? 'text-emerald-700 font-semibold' : ''
+                }`
+              }
+            >
+              Contact
+            </NavLink>
+          </div>
+        </div>
+      </div>
     </nav>
-    
-    </>
   );
 };
 
