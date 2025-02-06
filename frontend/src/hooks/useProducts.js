@@ -19,7 +19,12 @@ const useProducts = () => {
     occasion: [],
     season: [],
     searchQuery: '',
-    priceRange: [0, 10000]
+    priceRange: [0, 10000],
+    availability: '',
+    isNewArrival: '',
+    isBestSeller: '',
+    isOnSale: '',
+    specialCollection: ''
   };
 
   const [localFilters, setLocalFilters] = useState(defaultFilters);
@@ -34,17 +39,22 @@ const useProducts = () => {
     occasion: true,
     season: true,
     price: true,
+    availability: true,
     searchQuery: true,
+    isNewArrival: true,
+    isBestSeller: true,
+    isOnSale: true,
+    specialCollection: true
   });
 
   // Filter categories (same as before)
   const filterCategories = {
-    category: ['Sneakers', 'Loafers', 'Oxford', 'Slip-ons', 'Boots', 'Sandals'],
+    category: [ 'Loafers', 'Oxford', 'Slip-ins', 'Boots', 'Running Shoes', 'Walking Shoes', 'Sandals', 'Floaters', 'Flip Flops', 'Sports Shoes', 'Formal Shoes', 'Casual Shoes', 'Ethnic'],
     gender: ['Men', 'Women', 'Kids', 'Unisex'],
     brand: ['Nike', 'Adidas', 'Puma', 'Reebok', 'Vans'],
-    material: ['Leather', 'Canvas', 'Mesh', 'Suede', 'Synthetic'],
+    material: ['Leather', 'Canvas', 'Mesh', 'Suede', 'Synthetic', 'Rubber', 'Fabric', 'Cotton', 'Nylon'],
     color: ['Black', 'Brown', 'White', 'Blue', 'Red', 'Green'],
-    occasion: ['Casual', 'Formal', 'Sports', 'Party', 'Beach'],
+    occasion: ['Casual', 'Formal', 'Sports', 'Party', 'Beach', 'Wedding', 'Work', 'Outdoor'],
     season: ['Summer', 'Winter', 'Monsoon', 'All Season'],
     availability: ['exclude out of stock']
   };
@@ -98,7 +108,12 @@ const useProducts = () => {
       occasion: [],
       season: [],
       priceRange: [0, 10000],
-      searchQuery: ''
+      searchQuery: '',
+      availability: '',
+      isNewArrival: '',
+      isBestSeller: '',
+      isOnSale: '',
+      specialCollection: ''
     };
 
     setLocalFilters(resetState);
@@ -122,7 +137,12 @@ const useProducts = () => {
         season: filters?.season?.length > 0 ? filters.season : undefined,
         searchQuery: filters?.searchQuery || '',
         minPrice: filters?.priceRange?.[0] || 0,
-        maxPrice: filters?.priceRange?.[1] || 10000
+        maxPrice: filters?.priceRange?.[1] || 10000,
+        availability: filters?.availability || '',
+        isBestSeller: filters.isBestSeller? filters.isBestSeller : '',
+        isNewArrival: filters.isNewArrival? filters.isNewArrival : '',
+        specialCollection: filters.specialCollection? filters.specialCollection : '',
+        isOnSale: filters.isOnSale? filters.isOnSale : '',
       };
 
       // Remove undefined values

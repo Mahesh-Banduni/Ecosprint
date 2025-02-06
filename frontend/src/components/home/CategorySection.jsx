@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Swiper, SwiperSlide } from 'swiper/react'; // Import Swiper styles
 import { Navigation, Pagination } from "swiper/modules";
 import 'swiper/css';
@@ -8,31 +8,59 @@ import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
 
 import casualsneakers from "../../assets/images/casualsneakers.jpg";
-import laceups from "../../assets/images/laceups.jpg";
-import Slipins from "../../assets/images/Slipins.jpg";
-import slipons from "../../assets/images/slipons.jpg";
-import slipperssandals from "../../assets/images/slipperssandals.jpg";
 import Walkingshoes from "../../assets/images/Walkingshoes.jpg";
+import Slipins from "../../assets/images/Slipins.jpg";
+import loafers from "../../assets/images/loafers.jpg";
+import formal from "../../assets/images/formal.jpeg";
+import sandals from "../../assets/images/slipperssandals.jpg";
+
+import oxford from "../../assets/images/oxford.jpg";
+import running from "../../assets/images/running.jpeg";
+import ethnic from "../../assets/images/ethnic.jpg";
+import boots from "../../assets/images/boots.jpeg";
+import sports from "../../assets/images/sports.jpeg";
+import flipflops from "../../assets/images/flipflops.jpeg";
+import floaters from "../../assets/images/floaters.jpg";
 
 const CategorySection = () => {
+  const navigate = useNavigate();
   // Data for the category items
   const categories = [
-    { id: 1, name: "Casual Sneakers", image: casualsneakers },
+    { id: 1, name: "Casual Shoes", image: casualsneakers },
     { id: 2, name: "Walking Shoes", image: Walkingshoes },
     { id: 3, name: "Slip-ins", image: Slipins },
-    { id: 4, name: "Lace-ups", image: laceups },
-    { id: 5, name: "Slippers/Sandals", image: slipperssandals },
-    { id: 6, name: "Slip-ons", image: slipons },
+    { id: 4, name: "Loafers", image: loafers },
+    { id: 5, name: "Sandals", image: sandals },
+    { id: 6, name: "Formal Shoes", image: formal },
   ];
 
   const categories1 = [
-    { id: 1, name: "Oxford", image: casualsneakers },
-    { id: 2, name: "Walking Shoes", image: Walkingshoes },
-    { id: 3, name: "Ethnic", image: Slipins },
-    { id: 4, name: "Lace-ups", image: laceups },
-    { id: 5, name: "Slippers/Sandals", image: slipperssandals },
-    { id: 6, name: "Slip-ons", image: slipons },
+    { id: 1, name: "Oxford", image: oxford },
+    { id: 2, name: "Running Shoes", image: running },
+    { id: 3, name: "Ethnic", image: ethnic },
+    { id: 4, name: "Boots", image: boots },
+    { id: 5, name: "Flip Flops ", image: flipflops },
+    { id: 6, name: "Sports Shoes", image: sports },
+    { id: 7, name: "Floaters", image: floaters },
   ];
+
+  const handleCategoryClick = (type) => {
+    navigate('/products', { 
+      state: { 
+        initialFilters: {
+          gender: [],
+          category: [type],
+          brand: [],
+          material: [],
+          color: [],
+          occasion: [],
+          season: [],
+          searchQuery: '',
+          priceRange: [0, 10000]
+        }
+      }
+    });
+  };
 
   return (
     <div className="w-11/12 mx-auto my-10 flex flex-col gap-5 max-sm:gap-2">
@@ -89,8 +117,7 @@ const CategorySection = () => {
         >
           {categories.map((category) => (
             <SwiperSlide key={category.id}>
-              <Link to="/products">
-              <div className="mt-2 mb-3 m-3 flex flex-col items-center shadow-md hover:shadow-xl transform hover:-translate-y-2 transition duration-300">
+              <div onClick={() => handleCategoryClick(category.name)} className="mt-2 mb-3 m-3 flex flex-col items-center shadow-md hover:shadow-xl transform hover:-translate-y-2 transition duration-300">
                 <img
                   className="w-full h-full object-cover"
                   src={category.image}
@@ -98,7 +125,6 @@ const CategorySection = () => {
                 />
                 <div className="mt-2 mb-3 lg:text-xl md:text-xl text-center sm:text-sm ">{category.name}</div>
               </div>
-              </Link>
             </SwiperSlide>
           ))}
         </Swiper>
@@ -136,10 +162,9 @@ const CategorySection = () => {
             },
           }}
         >
-          {categories.map((category) => (
+          {categories1.map((category) => (
             <SwiperSlide key={category.id}>
-            <Link to="/products">
-              <div className="mt-2 mb-3 m-3 flex flex-col items-center shadow-md hover:shadow-xl transform hover:-translate-y-2 transition duration-300">
+              <div onClick={() => handleCategoryClick(category.name)} className="mt-2 mb-3 m-3 flex flex-col items-center shadow-md hover:shadow-xl transform hover:-translate-y-2 transition duration-300">
                 <img
                   className="w-full h-full object-cover"
                   src={category.image}
@@ -147,7 +172,6 @@ const CategorySection = () => {
                 />
                 <div className="mt-2 mb-3 lg:text-xl md:text-xl text-center sm:text-sm ">{category.name}</div>
               </div>
-              </Link>
           </SwiperSlide>
           ))}
         </Swiper>

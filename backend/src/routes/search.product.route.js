@@ -25,7 +25,7 @@ const router = express.Router();
  *         name: category
  *         schema:
  *           type: string
- *           enum: ['Sneakers', 'Loafers', 'Oxford', 'Slip-ons', 'Slip-ins', 'Running Shoes', 'Walking Shoes', 'Boots', 'Sandals', 'Floaters', 'Flip Flops', 'Sports Shoes', 'Formal Shoes', 'Casual Shoes', 'Ethnic']
+ *           enum: ['Floaters', 'Loafers', 'Oxford', 'Slip-ins', 'Boots', 'Running Shoes', 'Walking Shoes', 'Sandals', 'Flip Flops', 'Sports Shoes', 'Formal Shoes', 'Casual Shoes', 'Ethnic']
  *       - in: query
  *         name: gender
  *         schema:

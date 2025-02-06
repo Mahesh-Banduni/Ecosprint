@@ -12,7 +12,7 @@ const FilterSidebar = ({ isOpen, onClose }) => {
   return (
     <>
       {/* Mobile overlay */}
-      <div 
+      < div
         className={`fixed inset-0 bg-black bg-opacity-50 transition-opacity sm:hidden ${
           isOpen ? 'opacity-100 z-40' : 'opacity-0 -z-10'
         }`}
@@ -21,7 +21,7 @@ const FilterSidebar = ({ isOpen, onClose }) => {
 
       {/* Sidebar */}
       <div className={`
-        fixed sm:sticky sm:top-20 top-0 right-0 h-full w-64 bg-white 
+        fixed sm:sticky sm:top-20 top-0 right-0 h-full w-70 bg-white 
         sm:w-auto sm:h-[calc(100vh-5rem)] sm:max-w-xs
         ${isOpen ? 'translate-x-0' : 'translate-x-full'}
         sm:translate-x-0 
@@ -30,7 +30,7 @@ const FilterSidebar = ({ isOpen, onClose }) => {
         sm:col-span-3 lg:col-span-2
         scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100
       `}>
-        <div className="flex justify-between items-center mb-4 sm:hidden">
+        <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">Filters</h2>
           <button 
             onClick={onClose} 

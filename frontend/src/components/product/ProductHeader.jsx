@@ -8,7 +8,6 @@ import { setFilters } from '../../store/productSlice';
 const ProductHeader = () => {
   const dispatch = useDispatch();
   const sortOptions = [
-    { value: '', label: 'Sort By' },
     { value: 'newest', label: 'Newest Arrivals' },
     { value: 'price-low', label: 'Price: Low to High' },
     { value: 'price-high', label: 'Price: High to Low' },
@@ -17,12 +16,15 @@ const ProductHeader = () => {
 
   return (
     <div className="flex flex-row justify-between items-center p-4 bg-white shadow-sm ">
-      <h1 className="text-2xl mt-1 font-bold text-gray-800">Our Products</h1>
+      <h1 className="text-xl mt-1 font-bold text-gray-800 lg:text-2xl">Our Products</h1>
       <div className="mt-4 md:mt-0">
         <select 
-          className="p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-500"
           onChange={(e) => dispatch(setFilters({ sortBy: e.target.value }))}
         >
+          <option className="z-10" defaultValue={""}>
+          Select Options
+        </option>
           {sortOptions.map(option => (
             <option key={option.value} value={option.value}>
               {option.label}

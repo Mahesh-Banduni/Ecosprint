@@ -12,7 +12,11 @@ const initialState = {
     season: [],
     priceRange: { min: 0, max: 0 },
     searchQuery: '',
-    sortBy: 'newest'
+    sortBy: 'newest',
+    isNewArrival: '',
+    isBestSeller: '',
+    isOnSale: '',
+    specialCollection: ''
   },
   loading: false,
   error: null

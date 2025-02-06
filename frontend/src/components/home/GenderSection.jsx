@@ -32,7 +32,12 @@ const GenderSection = () => {
           occasion: [],
           season: [],
           searchQuery: '',
-          priceRange: [0, 10000]
+          priceRange: [0, 10000],
+          searchQuery: '',
+          isBestSeller: '',
+          isOnSale: '',
+          specialCollection: '',
+          isNewArrival: '',
         }
       }
     });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Swiper, SwiperSlide } from 'swiper/react'; // Import Swiper styles
 import { Navigation, Pagination } from "swiper/modules";
 import 'swiper/css';
@@ -15,15 +15,34 @@ import casual from "../../assets/images/casual.webp";
 import beach from "../../assets/images/beach.jpg";
 
 const OcassionSection = () => {
+  const navigate = useNavigate();
   // Data for the category items
   const categories = [
     { id: 1, name: "Wedding", image: wedding },
     { id: 2, name: "Party", image: party },
     { id: 3, name: "Work", image: work },
-    { id: 4, name: "Sport", image: sport },
+    { id: 4, name: "Sports", image: sport },
     { id: 3, name: "Casual", image: casual },
     { id: 4, name: "Beach", image: beach }
   ];
+
+  const handleOccasionClick = (occasion) => {
+    navigate('/products', { 
+      state: { 
+        initialFilters: {
+          gender: [],
+          category: [],
+          brand: [],
+          material: [],
+          color: [],
+          occasion: [occasion],
+          season: [],
+          searchQuery: '',
+          priceRange: [0, 10000]
+        }
+      }
+    });
+  };
 
   return (
     <div className="w-11/12 mx-auto my-10 flex flex-col gap-5 max-sm:gap-2 ">
@@ -77,8 +96,7 @@ const OcassionSection = () => {
         >
           {categories.map((category) => (
             <SwiperSlide key={category.id}>
-              <Link to="/products">
-                <div className="mt-2 mb-3 m-2  flex flex-col items-center shadow-md hover:shadow-xl transform hover:-translate-y-2 transition duration-300">
+                <div onClick={() => handleOccasionClick(category.name)} className="mt-2 mb-3 m-2  flex flex-col items-center shadow-md hover:shadow-xl transform hover:-translate-y-2 transition duration-300">
                 <img
                 className="w-full h-[100%] object-cover"
                 src={category.image}
@@ -86,7 +104,6 @@ const OcassionSection = () => {
                 />
                 <div className="mt-2 mb-3 text-lg sm:text-xl md:text-xl lg:text-1xl xl:text-1xl text-center">{category.name}</div>
               </div>
-              </Link>
             </SwiperSlide>
             
           ))}

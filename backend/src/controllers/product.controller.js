@@ -48,7 +48,7 @@ const searchProduct= async(req, res, next) =>{
         const filters = {
             productCode: req.query.productCode,
             productName: req.query.productName,
-            productType: req.query.productType,
+            category: req.query.category,
             gender: req.query.gender,
             material: req.query.material,
             color: req.query.color,
