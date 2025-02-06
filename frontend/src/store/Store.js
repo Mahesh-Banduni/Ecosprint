@@ -10,12 +10,6 @@ const store = configureStore({
     // cart: cartReducer,
     // user: userReducer
   },
-  // Middleware and devtools configuration
-  middleware: (getDefaultMiddleware) => 
-    getDefaultMiddleware({
-      serializableCheck: false // Useful for handling non-serializable values
-    }),
-  devTools: process.env.NODE_ENV !== 'production'
 });
 
 export default store;
