@@ -11,6 +11,8 @@ const ProductDetailPage = () => {
   const { id } = useParams();
   const { product, loading, error } = useProductDetails(id);
   const [selectedSize, setSelectedSize] = useState(null);
+  const [status, setStatus] = useState('');
+
 
   if (loading) return <div className="text-center py-10">Loading...</div>;
   if (error) return <div className="text-red-500 text-center py-10">{error}</div>;
@@ -18,17 +20,25 @@ const ProductDetailPage = () => {
 
   const handleAddToCart = () => {
     if (!selectedSize) {
-      alert('Please select a size');
+      setStatus('Please select a size!');
       return;
     }
     // Implement add to cart logic
   };
 
-  return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="grid md:grid-cols-2 gap-8">
-        <ProductImageGallery images={product.images} />
+  const handleSizeSelect = (size) => {
+    setSelectedSize(size);
+    setStatus(''); // Clear any previous status message
+  };
 
+  return (
+    <div className="container mx-auto px-4 py-8 w-screen">
+      <div className="grid md:grid-cols-2 gap-8">
+      <div className="w-full">
+          <ProductImageGallery images={product.images} />
+        </div>
+
+        <div className="w-full">
         <div>
           <div className="flex justify-between items-start">
             <div>
@@ -76,18 +86,32 @@ const ProductDetailPage = () => {
                     className={`
                       px-4 py-2 border rounded-md
                       ${selectedSize === size 
-                        ? 'bg-blue-600 text-white' 
+                        ? 'bg-emerald-600 text-white' 
                         : 'bg-white text-gray-700 hover:bg-gray-100'
                       }
                     `}
-                    onClick={() => setSelectedSize(size)}
+                    onClick={() => handleSizeSelect(size)}
                   >
                     {size}
+                    
                   </button>
+                  
                 );
               })}
             </div>
           </div>
+          {status ? (
+                <p
+                    style={{
+                        marginTop: '1rem',
+                        color:'#dc3545',
+                        fontWeight: '600',
+                        fontSize: '14px',
+                    }}
+                >
+                    {status}
+                </p>
+          ): ''}
 
           {/* Action Buttons */}
           <div className="mt-6 space-y-4">
@@ -98,7 +122,7 @@ const ProductDetailPage = () => {
                 w-full py-3 rounded-md text-white font-semibold
                 ${product.stockStatus === 'out-of-stock'
                   ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-blue-600 hover:bg-blue-700'
+                  : 'bg-emerald-600 hover:bg-emerald-700'
                 }
               `}
             >
@@ -107,8 +131,19 @@ const ProductDetailPage = () => {
                 : 'Add to Cart'
               }
             </button>
-            <button className="w-full py-3 rounded-md border border-blue-600 text-blue-600 hover:bg-blue-50">
-              Buy Now
+            <button onClick={handleAddToCart}
+              disabled={product.stockStatus === 'out-of-stock'} 
+              className={`w-full py-3 rounded-md border 
+                ${product.stockStatus === 'out-of-stock'
+                  ? 'bg-red-400 cursor-not-allowed'
+                  :'border-emerald-600 text-emerald-600 hover:bg-emerald-50'
+                  }
+               `}
+            >
+              {product.stockStatus === 'out-of-stock' 
+                ? 'Available Soon' 
+                : 'Buy Now'
+              }
             </button>
           </div>
 
@@ -129,6 +164,7 @@ const ProductDetailPage = () => {
           </div>
 
           <ProductDetails product={product} />
+        </div>
         </div>
       </div>
     </div>
