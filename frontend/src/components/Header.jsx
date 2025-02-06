@@ -4,8 +4,6 @@ import { IoSearch } from 'react-icons/io5';
 import { CgProfile } from 'react-icons/cg';
 import { Menu, X, ChevronDown } from 'lucide-react';
 import { logo } from '../utils/icons';
-
-
 import { useSelector, useDispatch } from 'react-redux';
 import { setFilters } from '../store/productSlice';
 
@@ -13,16 +11,44 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const profileDropdownRef = useRef(null);
-  const dispatch=useDispatch();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleSearchClick = () => {
-    fetchProducts(setFilters);
-    navigate(`/products`);
+    if (searchQuery.trim()) {
+      dispatch(setFilters({ searchQuery: searchQuery.trim() }));
+      navigate('/products', { 
+        state: { 
+          initialFilters: {
+            gender: [],
+            category: [],
+            brand: [],
+            material: [],
+            color: [],
+            occasion: [],
+            season: [],
+            searchQuery: searchQuery.trim(),
+            priceRange: [0, 10000],
+            isBestSeller: '',
+            isOnSale: '',
+            specialCollection: '',
+            isNewArrival: '',
+          }
+        }
+      });
+      setSearchQuery(''); // Clear search after navigation
+      setIsSearchOpen(false); // Close mobile search if open
+    }
   };
 
-  // Close dropdown when clicking outside
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSearchClick();
+    }
+  };
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target)) {
@@ -50,9 +76,7 @@ const Header = () => {
 
   return (
     <nav className="sticky top-0 z-50 bg-white shadow-md w-full">
-      {/* Top Navigation Section */}
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-        {/* Mobile Menu Toggle */}
         <div className="flex items-center md:hidden">
           <button 
             onClick={toggleMenu} 
@@ -62,7 +86,6 @@ const Header = () => {
           </button>
         </div>
 
-        {/* Logo */}
         <div className="flex items-center">
           <Link to="/" className="flex items-center">
             <img 
@@ -74,41 +97,43 @@ const Header = () => {
           </Link>
         </div>
 
-        {/* Search Bar (Desktop) */}
         <div className="hidden md:flex items-center justify-center flex-grow mx-8 max-w-xl">
           <div className="flex items-center w-full border border-gray-300 rounded-md px-3 py-2">
             <input 
-              onChange={(e) => dispatch(setFilters({ searchQuery: e.target.value }))}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyPress={handleKeyPress}
               type="text" 
               placeholder="Search..." 
               className="w-full outline-none text-sm"
             />
-            <IoSearch onClick={handleSearchClick} className="text-gray-500 ml-2" />
+            <button 
+              onClick={handleSearchClick}
+              className="text-gray-500 hover:text-gray-700 focus:outline-none"
+            >
+              <IoSearch className="ml-2" />
+            </button>
           </div>
         </div>
 
-        <div className=' flex justify-end items-center gap-2'>
-        {/* Mobile Search Toggle */}
-        <div className="md:hidden  mt-2">
-          <button 
-            onClick={toggleSearch} 
-            className="text-gray-700 focus:outline-none"
-          >
-            <IoSearch size={25} />
-          </button>
-        </div>
-
-        {/* Right Side Icons */}
-        <div className="flex items-center space-x-4">
-          {/* Profile Dropdown */}
-          <div className="relative" ref={profileDropdownRef}>
+        <div className="flex justify-end items-center gap-2">
+          <div className="md:hidden mt-2">
             <button 
-              onClick={toggleProfileDropdown} 
-              className="flex items-center text-gray-700 focus:outline-none"
+              onClick={toggleSearch} 
+              className="text-gray-700 focus:outline-none"
             >
-              <CgProfile size={24} className='sm:mr-5 sm:ml-3 md:mr-5' />
-              {/* <ChevronDown size={16} className="ml-1" /> */}
+              <IoSearch size={25} />
             </button>
+          </div>
+
+          <div className="flex items-center space-x-4">
+            <div className="relative" ref={profileDropdownRef}>
+              <button 
+                onClick={toggleProfileDropdown} 
+                className="flex items-center text-gray-700 focus:outline-none"
+              >
+                <CgProfile size={24} className="sm:mr-5 sm:ml-3 md:mr-5" />
+              </button>
             </div>
             {isProfileDropdownOpen && (
               <div className="absolute right-[3%] mt-40 w-48 bg-white border rounded-md shadow-lg py-1">
@@ -135,34 +160,34 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Mobile Search Bar */}
       {isSearchOpen && (
         <div className="md:hidden px-4 pb-3">
           <div className="flex items-center border border-gray-300 rounded-md px-3 py-2">
             <input 
               type="text" 
-              onChange={(e) => dispatch(setFilters({ searchQuery: e.target.value }))}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyPress={handleKeyPress}
               placeholder="Search..." 
               className="w-full outline-none text-sm"
             />
-            <IoSearch onClick={handleSearchClick} className="text-gray-500 ml-2" />
+            <button 
+              onClick={handleSearchClick}
+              className="text-gray-500 hover:text-gray-700 focus:outline-none"
+            >
+              <IoSearch className="ml-2" />
+            </button>
           </div>
         </div>
       )}
 
-      {/* Navigation Menu */}
-      <div className={`
-        ${isMenuOpen ? 'block' : 'hidden'} 
-        md:block bg-white border-t
-      `}>
+      <div className={`${isMenuOpen ? 'block' : 'hidden'} md:block bg-white border-t`}>
         <div className="max-w-7xl mx-auto px-4 py-2">
           <div className="flex flex-col lg:items-center justify-center md:flex-row space-y-2 md:space-y-0 md:space-x-6">
             <NavLink 
               to="/" 
               className={({ isActive }) => 
-                `text-gray-700 hover:text-emerald-600 ${
-                  isActive ? 'text-emerald-700 font-semibold' : ''
-                }`
+                `text-gray-700 hover:text-emerald-600 ${isActive ? 'text-emerald-700 font-semibold' : ''}`
               }
             >
               Home
@@ -170,9 +195,7 @@ const Header = () => {
             <NavLink 
               to="/about" 
               className={({ isActive }) => 
-                `text-gray-700 hover:text-emerald-600 ${
-                  isActive ? 'text-emerald-700 font-semibold' : ''
-                }`
+                `text-gray-700 hover:text-emerald-600 ${isActive ? 'text-emerald-700 font-semibold' : ''}`
               }
             >
               About
@@ -180,9 +203,7 @@ const Header = () => {
             <NavLink 
               to="/products" 
               className={({ isActive }) => 
-                `text-gray-700 hover:text-emerald-600 ${
-                  isActive ? 'text-emerald-700 font-semibold' : ''
-                }`
+                `text-gray-700 hover:text-emerald-600 ${isActive ? 'text-emerald-700 font-semibold' : ''}`
               }
             >
               Products
@@ -190,9 +211,7 @@ const Header = () => {
             <NavLink 
               to="/contact" 
               className={({ isActive }) => 
-                `text-gray-700 hover:text-emerald-600 ${
-                  isActive ? 'text-emerald-700 font-semibold' : ''
-                }`
+                `text-gray-700 hover:text-emerald-600 ${isActive ? 'text-emerald-700 font-semibold' : ''}`
               }
             >
               Contact

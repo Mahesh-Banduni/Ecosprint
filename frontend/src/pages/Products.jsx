@@ -35,7 +35,7 @@ const Products = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <ProductHeader />
+      <ProductHeader dispatch={dispatch} setFilters={setFilters} />
       <div className="flex">
         <button
           className="fixed bottom-4 right-4 md:hidden z-50 bg-emerald-600 text-white p-4 rounded-full shadow-lg"
