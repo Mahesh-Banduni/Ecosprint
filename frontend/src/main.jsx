@@ -2,7 +2,7 @@ import { lazy, StrictMode, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Provider } from "react-redux";
-import {store} from "./store/Store";
+import store from "./store/Store";
 import App from "./App";
 import "./index.css";
 
