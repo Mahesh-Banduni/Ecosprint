@@ -3,6 +3,7 @@ const { ConflictError, NotFoundError, BadRequestError } = require('../errors/err
 
 const errorHandler = (error, req, res, next) => {
     if (error instanceof ConflictError || error instanceof BadRequestError || error instanceof NotFoundError) {
+        console.log(error);
         return res.status(error.statusCode).json({ error: error.message });
     }
 

@@ -45,7 +45,8 @@ const useProducts = () => {
     material: ['Leather', 'Canvas', 'Mesh', 'Suede', 'Synthetic'],
     color: ['Black', 'Brown', 'White', 'Blue', 'Red', 'Green'],
     occasion: ['Casual', 'Formal', 'Sports', 'Party', 'Beach'],
-    season: ['Summer', 'Winter', 'Monsoon', 'All Season']
+    season: ['Summer', 'Winter', 'Monsoon', 'All Season'],
+    availability: ['exclude out of stock']
   };
 
   // Toggle section expand
