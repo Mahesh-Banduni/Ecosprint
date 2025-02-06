@@ -40,7 +40,7 @@ const ProductHeader = ({ dispatch, setFilters }) => {
         <div className="relative w-full sm:w-48" ref={dropdownRef}>
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="w-full px-4 py-2 text-left bg-white border rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 flex justify-between items-center"
+            className="w-full px-4 py-2 text-left bg-white border rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 flex justify-between items-center"
           >
             <span className="text-gray-700">{selectedOption.label}</span>
             <ChevronDown 
@@ -59,7 +59,7 @@ const ProductHeader = ({ dispatch, setFilters }) => {
                       onClick={() => handleSelect(option)}
                       className={`w-full px-4 py-2 text-left hover:bg-gray-100 ${
                         selectedOption.value === option.value
-                          ? 'bg-blue-50 text-blue-700'
+                          ? 'bg-emerald-50 text-emerald-700'
                           : 'text-gray-700'
                       }`}
                     >
