@@ -135,7 +135,7 @@ const ProductDetailPage = () => {
               disabled={product.stockStatus === 'out-of-stock'} 
               className={`w-full py-3 rounded-md border 
                 ${product.stockStatus === 'out-of-stock'
-                  ? 'bg-red-400 cursor-not-allowed'
+                  ? 'bg-red-800 cursor-not-allowed text-white'
                   :'border-emerald-600 text-emerald-600 hover:bg-emerald-50'
                   }
                `}
