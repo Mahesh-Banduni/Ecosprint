@@ -4,7 +4,7 @@ import ContactForm from './ContactForm';
 
 const ContactContent = () => {
   return (
-    <div className="w-full max-w-4xl rounded-lg shadow-lg">
+    <div className="w-full max-w-4xl mx-auto p-8 rounded-lg shadow-lg">
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold text-emerald-900 mb-6">
           Contact Us. We're here to help you!
@@ -16,7 +16,7 @@ const ContactContent = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
         <div className="group hover:transform hover:scale-105 transition-all duration-300">
           <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-shadow">
             <div className="flex items-center justify-center mb-4">

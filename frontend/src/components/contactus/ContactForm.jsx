@@ -11,13 +11,13 @@ const ContactForm = () => {
   
     return (
         <>
-       <div className="text-center p-8 mt-10 mx-auto">
+       <div className="text-center mr-6 ml-6 mx-auto">
                <p className="text-2xl text-gray-700 font-medium">
                  Fill out the form below, and we'll get back to you as soon as possible!
                </p>
                
              </div>
-        <div className="w-full max-w-2xl mx-auto p-6">
+        <div className="w-full max-w-2xl mb-6 mx-auto p-6">
         <form onSubmit={handleSubmit} className="space-y-6">
             
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
