@@ -84,7 +84,7 @@ const router = express.Router();
  *         name: sortBy
  *         schema:
  *           type: string
- *           enum: [price, rating]
+ *           enum: [salePrice, rating]
  *         description: Sort properties by expected price and rating
  *       - in: query
  *         name: sortOrder

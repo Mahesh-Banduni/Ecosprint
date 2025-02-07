@@ -13,6 +13,7 @@ const Header = () => {
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const profileDropdownRef = useRef(null);
+  const menuRef = useRef(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -38,8 +39,8 @@ const Header = () => {
           }
         }
       });
-      setSearchQuery(''); // Clear search after navigation
-      setIsSearchOpen(false); // Close mobile search if open
+      setSearchQuery('');
+      setIsSearchOpen(false);
     }
   };
 
@@ -51,8 +52,14 @@ const Header = () => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
+      // Handle profile dropdown
       if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target)) {
         setIsProfileDropdownOpen(false);
+      }
+      
+      // Handle menu dropdown
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsMenuOpen(false);
       }
     };
 
@@ -181,7 +188,7 @@ const Header = () => {
         </div>
       )}
 
-      <div className={`${isMenuOpen ? 'block' : 'hidden'} md:block bg-white border-t`}>
+      <div ref={menuRef} className={`${isMenuOpen ? 'block' : 'hidden'} md:block bg-white border-t`}>
         <div className="max-w-7xl mx-auto px-4 py-2">
           <div className="flex flex-col lg:items-center justify-center md:flex-row space-y-2 md:space-y-0 md:space-x-6">
             <NavLink 

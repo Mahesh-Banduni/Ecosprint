@@ -11,8 +11,13 @@ const ContactForm = () => {
   
     return (
         <>
-        <h1 className="text-xl flex justify-center items-center extrabold mb-5 lg:text-2xl m-3 underline">We Value Your Thoughts and Inquiries – Contact Us to Shine Brighter Together!</h1>
-      <div className="w-full max-w-2xl mx-auto p-6">
+       <div className="text-center mt-12">
+               <p className="text-2xl text-gray-700 font-medium">
+                 Fill out the form below, and we'll get back to you as soon as possible!
+               </p>
+               
+             </div>
+        <div className="w-full max-w-2xl mx-auto p-6">
         <form onSubmit={handleSubmit} className="space-y-6">
             
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -28,7 +33,7 @@ const ContactForm = () => {
                 onChange={handleChange}
                 required
                 minLength={2}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                 placeholder="Your name"
               />
             </div>
@@ -44,7 +49,7 @@ const ContactForm = () => {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
                 placeholder="your@email.com"
               />
             </div>
@@ -63,7 +68,7 @@ const ContactForm = () => {
               required
               minLength={7}
               maxLength={11}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+              className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
               placeholder="Phone Number"
             />
           </div>
@@ -80,7 +85,7 @@ const ContactForm = () => {
               onChange={handleChange}
               required
               minLength={3}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+              className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
               placeholder="Message subject"
             />
           </div>
@@ -97,7 +102,7 @@ const ContactForm = () => {
               required
               minLength={10}
               rows={5}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+              className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
               placeholder="Your message"
             />
           </div>

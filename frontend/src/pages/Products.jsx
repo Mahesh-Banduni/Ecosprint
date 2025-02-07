@@ -14,7 +14,7 @@ const Products = () => {
   const dispatch = useDispatch();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { products, loading, error } = useSelector(state => state.products);
-  const { fetchProducts, localFilters, setLocalFilters } = useProducts();
+  const { fetchProducts, localFilters, setLocalFilters, handleSortChange } = useProducts();
   
   useEffect(() => {
     // Check if we have initial filters from navigation
@@ -35,7 +35,7 @@ const Products = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <ProductHeader dispatch={dispatch} setFilters={setFilters} />
+      <ProductHeader handleSortChange={handleSortChange}  setFilters={setFilters} />
       <div className="flex">
         <button
           className="fixed bottom-4 right-4 md:hidden z-50 bg-emerald-600 text-white p-4 rounded-full shadow-lg"

@@ -100,9 +100,9 @@ const searchProduct = async (filters, sortBy, sortOrder, searchQuery) => {
 
     // Advanced price filter (minPrice, maxPrice, or exactPrice)
     if (filters.minPrice || filters.maxPrice) {
-        query.price = {};
-        if (filters.minPrice) query.price.$gte = filters.minPrice;
-        if (filters.maxPrice) query.price.$lte = filters.maxPrice;
+        query.salePrice = {};
+        if (filters.minPrice) query.salePrice.$gte = filters.minPrice;
+        if (filters.maxPrice) query.salePrice.$lte = filters.maxPrice;
     }
 
     // Rating filter

@@ -1,17 +1,20 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { ChevronDown } from 'lucide-react';
 
-const ProductHeader = ({ dispatch, setFilters }) => {
+const ProductHeader = ({ handleSortChange, setFilters }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState({ value: '', label: 'Sort By' });
   const dropdownRef = useRef(null);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const sortOptions = [
-    { value: '', label: 'Sort By' },
-    { value: 'newest', label: 'Newest Arrivals' },
-    { value: 'price-low', label: 'Price: Low to High' },
-    { value: 'price-high', label: 'Price: High to Low' },
-    { value: 'rating', label: 'Highest Rated' }
+    { value: 'salePrice', order: 'Low to High', label: 'Price: Low to High' },
+    { value: 'salePrice', order: 'High to Low', label: 'Price: High to Low' },
+    { value: 'rating', order: 'Low to High', label: 'Rating: Low to High' },
+    { value: 'rating', order: 'High to Low', label: 'Rating: High to Low' }
   ];
 
   // Close dropdown when clicking outside
@@ -26,52 +29,39 @@ const ProductHeader = ({ dispatch, setFilters }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleSelect = (option) => {
-    setSelectedOption(option);
-    dispatch(setFilters({ sortBy: option.value }));
+  const handleSortByClick = (option) => {
+    handleSortChange(option.value, option.order); // Apply sorting
+    //setSelectedOption(sortOptions.find(opt => opt.value === option.value && opt.sortOrder === option.order));
     setIsOpen(false);
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center py-4 gap-4">
-        <h1 className="text-2xl font-bold tracking-tight">Our Products</h1>
-        
-        <div className="relative w-full sm:w-48" ref={dropdownRef}>
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="w-full px-4 py-2 text-left bg-white border rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 flex justify-between items-center"
-          >
-            <span className="text-gray-700">{selectedOption.label}</span>
-            <ChevronDown 
-              className={`w-4 h-4 transition-transform duration-200 ${
-                isOpen ? 'transform rotate-180' : ''
+    <div className='flex justify-end'>
+    <div className="mt-4 relative inline-block text-left" ref={dropdownRef}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full px-4 py-2 text-left bg-white border rounded-lg shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-emerald-500 flex justify-between items-center"
+      >
+        {selectedOption.label} <ChevronDown className="w-4 h-4 ml-2" />
+      </button>
+      {isOpen && (
+        <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg z-10">
+          {sortOptions.map((option) => (
+            <button
+              key={option.value + option.order}
+              onClick={() => handleSortByClick(option)}
+              className={`w-full px-4 py-2 text-left hover:bg-gray-100 ${
+                selectedOption.value === option.value && selectedOption.order === option.order
+                  ? 'bg-emerald-50 text-emerald-700'
+                  : 'text-gray-700'
               }`}
-            />
-          </button>
-
-          {isOpen && (
-            <div className="absolute z-10 w-full mt-1 bg-white border rounded-lg shadow-lg">
-              <ul className="py-1">
-                {sortOptions.map((option) => (
-                  <li key={option.value}>
-                    <button
-                      onClick={() => handleSelect(option)}
-                      className={`w-full px-4 py-2 text-left hover:bg-gray-100 ${
-                        selectedOption.value === option.value
-                          ? 'bg-emerald-50 text-emerald-700'
-                          : 'text-gray-700'
-                      }`}
-                    >
-                      {option.label}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+            >
+              {option.label}
+            </button>
+          ))}
         </div>
-      </div>
+      )}
+    </div>
     </div>
   );
 };

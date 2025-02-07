@@ -21,6 +21,8 @@ const useProducts = () => {
     searchQuery: '',
     priceRange: [0, 10000],
     availability: '',
+    sortBy: '',
+    sortOrder: '',
     isNewArrival: '',
     isBestSeller: '',
     isOnSale: '',
@@ -40,6 +42,8 @@ const useProducts = () => {
     season: true,
     price: true,
     availability: true,
+    sortBy: true,
+    sortOrder: true,
     searchQuery: true,
     isNewArrival: true,
     isBestSeller: true,
@@ -56,7 +60,7 @@ const useProducts = () => {
     color: ['Black', 'Brown', 'White', 'Blue', 'Red', 'Green'],
     occasion: ['Casual', 'Formal', 'Sports', 'Party', 'Beach', 'Wedding', 'Work', 'Outdoor'],
     season: ['Summer', 'Winter', 'Monsoon', 'All Season'],
-    availability: ['exclude out of stock']
+    availability: ['exclude out of stock'],
   };
 
   // Toggle section expand
@@ -90,6 +94,20 @@ const useProducts = () => {
     }));
   };
 
+  // Handle sorting change
+const handleSortChange = (sortBy, sortOrder) => {
+  const updatedFilters = {
+    ...currentFilters,
+    sortBy,
+    sortOrder,
+  };
+
+  setLocalFilters(updatedFilters); // Update local state
+  dispatch(setFilters(updatedFilters)); // Dispatch updated filters to Redux
+  fetchProducts(updatedFilters); // Fetch products with updated sorting
+};
+
+
   // Apply filters
   const applyFilters = () => {
     dispatch(setFilters(localFilters));
@@ -108,6 +126,8 @@ const useProducts = () => {
       occasion: [],
       season: [],
       priceRange: [0, 10000],
+      sortBy: '',
+      sortOrder: '',
       searchQuery: '',
       availability: '',
       isNewArrival: '',
@@ -139,6 +159,8 @@ const useProducts = () => {
         minPrice: filters?.priceRange?.[0] || 0,
         maxPrice: filters?.priceRange?.[1] || 10000,
         availability: filters?.availability || '',
+        sortBy: filters?.sortBy || '',
+        sortOrder: filters?.sortOrder || '',
         isBestSeller: filters.isBestSeller? filters.isBestSeller : '',
         isNewArrival: filters.isNewArrival? filters.isNewArrival : '',
         specialCollection: filters.specialCollection? filters.specialCollection : '',
@@ -202,7 +224,7 @@ const useProducts = () => {
     };
   };
 
-  return { fetchProducts, debouncedFetchProducts: debouncedFetchProducts(fetchProducts), currentFilters, localFilters,  setLocalFilters, expandedSections, filterCategories, toggleSection, handleFilterChange, handlePriceChange, applyFilters, resetFilters};
+  return { fetchProducts, debouncedFetchProducts: debouncedFetchProducts(fetchProducts), handleSortChange, currentFilters, localFilters,  setLocalFilters, expandedSections, filterCategories, toggleSection, handleFilterChange, handlePriceChange, applyFilters, resetFilters};
 };
 
 export default useProducts;
