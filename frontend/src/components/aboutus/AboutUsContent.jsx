@@ -1,7 +1,7 @@
 import React from 'react';
 import { ArrowUpRight } from 'lucide-react';
 
-const AboutUs = () => {
+const AboutUsContent = () => {
   return (
     <div className="max-w-6xl mx-auto p-8">
       {/* Hero Section */}
@@ -109,4 +109,4 @@ const AboutUs = () => {
   );
 };
 
-export default AboutUs;
+export default AboutUsContent;
