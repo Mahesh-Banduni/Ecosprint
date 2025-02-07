@@ -11,7 +11,7 @@ const ContactForm = () => {
   
     return (
         <>
-       <div className="text-center mt-12 mx-auto">
+       <div className="text-center p-8 mt-10 mx-auto">
                <p className="text-2xl text-gray-700 font-medium">
                  Fill out the form below, and we'll get back to you as soon as possible!
                </p>
