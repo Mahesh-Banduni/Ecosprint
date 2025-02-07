@@ -7,6 +7,7 @@ const createContactForm = async (formData) => {
   userDetails.fullName = formData.fullName;
   userDetails.phone = formData.phone;
   userDetails.email = formData.email;
+  userDetails.subject = formData.subject;
   userDetails.message = formData.message;
 
   const response = sendContactUsEmail(userDetails);

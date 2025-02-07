@@ -21,9 +21,9 @@ const ProductDetails = lazy(() => import("./pages/ProductDetailPage"));
 // const Wishlist = lazy(() => import("./pages/Wishlist"));
 // const Profile = lazy(() => import("./pages/Profile"));
 // const SignIn = lazy(() => import("./pages/SignIn"));
-// const SignUp = lazy(() => import("./pages/SignUp"));
-// const Contact = lazy(() => import("./pages/Contact"));
-// const About = lazy(() => import("./pages/About"));
+//const SignUp = lazy(() => import("./pages/SignUp"));
+const ContactUs = lazy(() => import("./pages/ContactUs"));
+const AboutUs = lazy(() => import("./pages/AboutUs"));
 
 // Router configuration
 const routes = createBrowserRouter([
@@ -95,22 +95,22 @@ const routes = createBrowserRouter([
       //     </Suspense>
       //   ),
       // },
-      // {
-      //   path: "/contact",
-      //   element: (
-      //     <Suspense fallback={<Loader />}>
-      //       <Contact />
-      //     </Suspense>
-      //   ),
-      // },
-      // {
-      //   path: "/about",
-      //   element: (
-      //     <Suspense fallback={<Loader />}>
-      //       <About />
-      //     </Suspense>
-      //   ),
-      // },
+      {
+        path: "/contact",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <ContactUs />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/about",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <AboutUs />
+          </Suspense>
+        ),
+      },
     ],
   },
 ]);

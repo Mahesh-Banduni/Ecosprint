@@ -7,6 +7,7 @@ import CoverSection1 from "../components/home/CoverSection1";
 import CoverSection2 from "../components/home/CoverSection2";
 import CoverSection3 from "../components/home/CoverSection3";
 import OcassionSection from "../components/home/OcassionSection";
+import ContactForm from "../components/contactus/ContactForm";
 
 const Home = () => {
   
@@ -23,6 +24,7 @@ const Home = () => {
     <GenderSection></GenderSection>
     <CoverSection3></CoverSection3>
     <OcassionSection></OcassionSection>
+    <ContactForm />
     </React.Fragment>
   );
 };
