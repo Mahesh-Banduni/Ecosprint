@@ -16,10 +16,18 @@ const FilterSidebar = ({ isOpen, onClose }) => {
     handleFilterChange, 
     handlePriceChange, 
     applyFilters, 
-    resetFilters
+    resetFilters,
+    handleCheckChange,
+    defaultFilters
   } = useProducts();
 
   const dispatch = useDispatch();
+   // Create new handler for checkbox changes
+
+   const handleCheckboxChange = (category, option) => {
+    currentFilters(category, option);
+    applyFilters(); // Apply filters immediately after change
+  };
 
   return (
     <>
@@ -38,7 +46,7 @@ const FilterSidebar = ({ isOpen, onClose }) => {
           ${isOpen ? 'right-0' : '-right-full md:right-0'}
           top-0 md:top-auto
           h-full md:h-[calc(100vh-4rem)]
-          w-[280px] md:w-64
+          sm:w-[280px] md:w-64
           bg-white
           transition-all duration-300
           z-50 md:z-30
@@ -49,6 +57,16 @@ const FilterSidebar = ({ isOpen, onClose }) => {
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
           <h2 className="text-lg font-semibold">Filters</h2>
+          <div className="border-t bg-white">
+          <div className="flex">
+            <button
+              onClick={resetFilters}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-emerald-100 rounded-md hover:bg-emerald-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+            >
+              Reset Filters
+            </button>
+          </div>
+        </div>
           <button 
             onClick={onClose}
             className="p-1 rounded-full hover:bg-gray-100 md:hidden"
@@ -109,11 +127,11 @@ const FilterSidebar = ({ isOpen, onClose }) => {
                         key={option}
                         className="flex items-center space-x-2 cursor-pointer"
                       >
-                        <input
-                          type="checkbox"
-                          checked={localFilters[category].includes(option)}
-                          onChange={() => handleFilterChange(category, option)}
-                          className="h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
+                      
+                         <input
+                         type="checkbox"
+                         onChange={() => handleCheckChange(category, option)}
+                         className="h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
                         />
                         <span className="text-sm text-gray-700">{option}</span>
                       </label>
@@ -126,22 +144,7 @@ const FilterSidebar = ({ isOpen, onClose }) => {
         </div>
 
         {/* Footer Actions */}
-        <div className="p-4 border-t bg-white">
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              onClick={applyFilters}
-              className="px-4 py-2 text-sm font-medium text-white bg-emerald-600 rounded-md hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
-            >
-              Apply
-            </button>
-            <button
-              onClick={resetFilters}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-            >
-              Reset
-            </button>
-          </div>
-        </div>
+        
       </aside>
     </>
   );

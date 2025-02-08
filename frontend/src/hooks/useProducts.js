@@ -9,6 +9,7 @@ const useProducts = () => {
   const dispatch = useDispatch();
 
   const currentFilters = useSelector(state => state.products.filters);
+  console.log(currentFilters);
   // Initialize with default values
   const defaultFilters = {
     category: [],
@@ -87,11 +88,24 @@ const useProducts = () => {
   };
 
   // Handle price range change
+  // const handlePriceChange = (value) => {
+  //   const updatedFilters = {
+  //     ...currentFilters,
+  //     priceRange: value
+  //   };
+
+  //   dispatch(setFilters(updatedFilters)); // Dispatch updated filters to Redux
+  //   fetchProducts(updatedFilters); // Fetch products with updated sorting
+  // };
+
   const handlePriceChange = (value) => {
-    setLocalFilters(prev => ({
-      ...prev,
+    const updatedFilters = {
+      ...currentFilters,
       priceRange: value
-    }));
+    };
+    setLocalFilters(updatedFilters);
+    dispatch(setFilters(updatedFilters));
+    fetchProducts(updatedFilters);
   };
 
   // Handle sorting change
@@ -103,6 +117,22 @@ const handleSortChange = (sortBy, sortOrder) => {
   };
 
   setLocalFilters(updatedFilters); // Update local state
+  dispatch(setFilters(updatedFilters)); // Dispatch updated filters to Redux
+  fetchProducts(updatedFilters); // Fetch products with updated sorting
+};
+
+const handleCheckChange = (category, value) => {
+  const currentFilterList = currentFilters[category] || [];
+  const newFilterList = currentFilterList.includes(value)
+    ? currentFilterList.filter(item => item !== value)
+    : [...currentFilterList, value];
+
+  const updatedFilters = {
+    ...currentFilters,
+    [category]: newFilterList
+  };
+
+  setLocalFilters(updatedFilters);
   dispatch(setFilters(updatedFilters)); // Dispatch updated filters to Redux
   fetchProducts(updatedFilters); // Fetch products with updated sorting
 };
@@ -136,7 +166,7 @@ const handleSortChange = (sortBy, sortOrder) => {
       specialCollection: ''
     };
 
-    setLocalFilters(resetState);
+    //setLocalFilters(resetState);
     dispatch(setFilters(resetState));
     fetchProducts(resetState);
     onClose();
@@ -224,7 +254,7 @@ const handleSortChange = (sortBy, sortOrder) => {
     };
   };
 
-  return { fetchProducts, debouncedFetchProducts: debouncedFetchProducts(fetchProducts), handleSortChange, currentFilters, localFilters,  setLocalFilters, expandedSections, filterCategories, toggleSection, handleFilterChange, handlePriceChange, applyFilters, resetFilters};
+  return { fetchProducts, debouncedFetchProducts: debouncedFetchProducts(fetchProducts),defaultFilters, handleSortChange,handleCheckChange, currentFilters, localFilters,  setLocalFilters, expandedSections, filterCategories, toggleSection, handleFilterChange, handlePriceChange, applyFilters, resetFilters};
 };
 
 export default useProducts;

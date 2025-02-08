@@ -17,11 +17,11 @@ const Loader = () => (
 const Home = lazy(() => import("./pages/Home"));
 const Products = lazy(() => import("./pages/Products"));
 const ProductDetails = lazy(() => import("./pages/ProductDetailPage"));
-// const Cart = lazy(() => import("./pages/Cart"));
+const Cart = lazy(() => import("./pages/Cart"));
 // const Wishlist = lazy(() => import("./pages/Wishlist"));
-// const Profile = lazy(() => import("./pages/Profile"));
-// const SignIn = lazy(() => import("./pages/SignIn"));
-//const SignUp = lazy(() => import("./pages/SignUp"));
+//const Profile = lazy(() => import("./pages/Profile"));
+const Login = lazy(() => import("./pages/Login"));
+const Register = lazy(() => import("./pages/Register"));
 const ContactUs = lazy(() => import("./pages/ContactUs"));
 const AboutUs = lazy(() => import("./pages/AboutUs"));
 
@@ -55,14 +55,14 @@ const routes = createBrowserRouter([
           </Suspense>
         ),
       },
-      // {
-      //   path: "/cart",
-      //   element: (
-      //     <Suspense fallback={<Loader />}>
-      //       <Cart />
-      //     </Suspense>
-      //   ),
-      // },
+      {
+        path: "/cart",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <Cart />
+          </Suspense>
+        ),
+      },
       // {
       //   path: "/wishlist",
       //   element: (
@@ -79,22 +79,22 @@ const routes = createBrowserRouter([
       //     </Suspense>
       //   ),
       // },
-      // {
-      //   path: "/signin",
-      //   element: (
-      //     <Suspense fallback={<Loader />}>
-      //       <SignIn />
-      //     </Suspense>
-      //   ),
-      // },
-      // {
-      //   path: "/signup",
-      //   element: (
-      //     <Suspense fallback={<Loader />}>
-      //       <SignUp />
-      //     </Suspense>
-      //   ),
-      // },
+      {
+        path: "/login",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <Login />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/register",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <Register />
+          </Suspense>
+        ),
+      },
       {
         path: "/contact",
         element: (

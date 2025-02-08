@@ -33,8 +33,8 @@ const ProductCard = ({ product }) => {
           </span>
         )}
       </div>
-      <div className="p-4">
-        <h3 className="text-lg font-semibold text-gray-800 truncate">
+      <div className="p-4 text-wrap">
+        <h3 className="text-sm text-wrap lg:text-lg font-semibold text-gray-800 truncate">
           {product.productName}
         </h3>
         <div className="flex items-center mt-1">
@@ -42,7 +42,7 @@ const ProductCard = ({ product }) => {
             {[...Array(5)].map((_, i) => (
               <Star
                 key={i}
-                size={16}
+                size={12}
                 className={`${
                   i < Math.floor(product.averageRating)
                     ? 'text-yellow-400 fill-current'
@@ -55,15 +55,18 @@ const ProductCard = ({ product }) => {
             ({product.totalReviews})
           </span>
         </div>
-        <div className="mt-2 flex items-center justify-between">
+        <div className="mt-2 flex-wrap justify-between flex-col sm:flex-row gap-2">
           <div>
             {product.salePrice ? (
               <>
-                <span className="text-lg font-bold text-red-600">
+                <span className="text-sm font-semibold text-emerald-600 lg:text-lg">
                   ₹{product.salePrice.toFixed(2)}
                 </span>
                 <span className="ml-2 text-sm text-gray-500 line-through">
                   ₹{product.price.toFixed(2)}
+                </span>
+                <span className="ml-1 bg-green-100 text-sm text-green-800 px-1 py-1 rounded">
+                  {Math.round(((product.price - product.salePrice) / product.price) * 100)}% OFF
                 </span>
               </>
             ) : (
@@ -72,9 +75,6 @@ const ProductCard = ({ product }) => {
               </span>
             )}
           </div>
-          {product.stockStatus === 'out-of-stock' && (
-            <span className="text-red-500 text-sm">Out of Stock</span>
-          )}
         </div>
       </div>
     </div>

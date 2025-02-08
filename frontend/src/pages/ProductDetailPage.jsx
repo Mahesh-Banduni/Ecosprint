@@ -1,18 +1,21 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Heart, Truck, Shield, RefreshCw } from 'lucide-react';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import { useProductDetails } from '../hooks/useProductDetails';
 import ProductImageGallery from '../components/productdetails/ProductImageGallery';
 import ProductRating from '../components/productdetails/ProductRating';
 import ProductDetails from '../components/productdetails/ProductDetails';
+import {useCart} from '../hooks/useCart';
 
 const ProductDetailPage = () => {
+  const {addItem} =useCart();
   const { id } = useParams();
   const { product, loading, error } = useProductDetails(id);
   const [selectedSize, setSelectedSize] = useState(null);
   const [status, setStatus] = useState('');
-
 
   if (loading) return <div className="text-center py-10">Loading...</div>;
   if (error) return <div className="text-red-500 text-center py-10">{error}</div>;
@@ -23,7 +26,27 @@ const ProductDetailPage = () => {
       setStatus('Please select a size!');
       return;
     }
-    // Implement add to cart logic
+    else{
+    addItem(id);
+    toast.info('Item Added to Cart', {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      style: {
+        background: '#FAD767',
+        color: '#3C423A',
+        border: '2px solid white',
+      },
+      progressStyle: {
+        background: 'white'
+      },
+      icon: false // Optional: remove default icon if needed
+    });
+  }
   };
 
   const handleSizeSelect = (size) => {
@@ -59,7 +82,7 @@ const ProductDetailPage = () => {
           <div className="mt-4">
             {product.salePrice ? (
               <div>
-                <span className="text-2xl font-bold text-red-600">
+                <span className="text-2xl font-bold text-emerald-600">
                   ₹{product.salePrice.toFixed(2)}
                 </span>
                 <span className="ml-4 line-through text-gray-500">
@@ -136,7 +159,7 @@ const ProductDetailPage = () => {
               className={`w-full py-3 rounded-md border 
                 ${product.stockStatus === 'out-of-stock'
                   ? 'bg-red-800 cursor-not-allowed text-white'
-                  :'border-emerald-600 text-emerald-600 hover:bg-emerald-50'
+                  :'border-emerald-600 text-emerald-600 font-bold hover:bg-emerald-50'
                   }
                `}
             >
@@ -146,6 +169,7 @@ const ProductDetailPage = () => {
               }
             </button>
           </div>
+          <ToastContainer />
 
           {/* Product Features */}
           <div className="mt-8 grid md:grid-cols-3 gap-4">

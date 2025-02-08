@@ -33,7 +33,6 @@ const GenderSection = () => {
           season: [],
           searchQuery: '',
           priceRange: [0, 10000],
-          searchQuery: '',
           isBestSeller: '',
           isOnSale: '',
           specialCollection: '',

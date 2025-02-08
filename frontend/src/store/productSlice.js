@@ -10,7 +10,7 @@ const initialState = {
     color: [],
     occasion: [],
     season: [],
-    priceRange: { min: 0, max: 0 },
+    priceRange: { min: 0, max: 10000 },
     searchQuery: '',
     sortBy: '',
     sortOrder: '',

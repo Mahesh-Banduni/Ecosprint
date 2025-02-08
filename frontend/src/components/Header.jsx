@@ -2,12 +2,13 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { IoSearch } from 'react-icons/io5';
 import { CgProfile } from 'react-icons/cg';
-import { Menu, X, ChevronDown } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { logo } from '../utils/icons';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setFilters } from '../store/productSlice';
 
 const Header = () => {
+  const token = localStorage.getItem("token");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
@@ -50,14 +51,37 @@ const Header = () => {
     }
   };
 
+  const handleRegisterClick = () => {
+    navigate('/register');
+    setIsProfileDropdownOpen(false);
+  };
+
+  const handleLoginClick = () => {
+    navigate('/login');
+    setIsProfileDropdownOpen(false);
+  };
+
+  const handleProfileClick = () => {
+    navigate('/profile');
+    setIsProfileDropdownOpen(false);
+  };
+
+  const handleSettingsClick = () => {
+    navigate('/settings');
+    setIsProfileDropdownOpen(false);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setIsProfileDropdownOpen(false);
+    navigate('/login');
+  };
+
   useEffect(() => {
     const handleClickOutside = (event) => {
-      // Handle profile dropdown
       if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target)) {
         setIsProfileDropdownOpen(false);
       }
-      
-      // Handle menu dropdown
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setIsMenuOpen(false);
       }
@@ -143,26 +167,47 @@ const Header = () => {
               </button>
             </div>
             {isProfileDropdownOpen && (
-              <div className="absolute right-[3%] mt-40 w-48 bg-white border rounded-md shadow-lg py-1">
-                <Link 
-                  to="/profile" 
-                  className="block px-4 py-2 hover:bg-gray-100"
-                >
-                  My Profile
-                </Link>
-                <Link 
-                  to="/settings" 
-                  className="block px-4 py-2 hover:bg-gray-100"
-                >
-                  Settings
-                </Link>
-                <button 
-                  className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                >
-                  Logout
-                </button>
-              </div>
-            )}
+        <div className="absolute right-4 top-16 w-48 bg-white border rounded-md shadow-lg py-1 z-50">
+          {!token ? (
+            <>
+              <button 
+                onClick={handleRegisterClick}
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+              >
+                Register
+              </button>
+              <button 
+                onClick={handleLoginClick}
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+              >
+                Login
+              </button>
+            </>
+          ) : (
+            <>
+              <button 
+                onClick={handleProfileClick}
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+              >
+                My Profile
+              </button>
+              <button 
+                onClick={handleSettingsClick}
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+              >
+                Settings
+              </button>
+              <button 
+                onClick={handleLogout}
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600"
+              >
+                Logout
+              </button>
+            </>
+          )}
+        </div>
+      )}
+
           </div>
         </div>
       </div>
@@ -193,6 +238,7 @@ const Header = () => {
           <div className="flex flex-col lg:items-center justify-center md:flex-row space-y-2 md:space-y-0 md:space-x-6">
             <NavLink 
               to="/" 
+              onClick={toggleMenu}
               className={({ isActive }) => 
                 `text-gray-700 hover:text-emerald-600 ${isActive ? 'text-emerald-700 font-semibold' : ''}`
               }
@@ -201,6 +247,7 @@ const Header = () => {
             </NavLink>
             <NavLink 
               to="/about" 
+              onClick={toggleMenu}
               className={({ isActive }) => 
                 `text-gray-700 hover:text-emerald-600 ${isActive ? 'text-emerald-700 font-semibold' : ''}`
               }
@@ -209,6 +256,7 @@ const Header = () => {
             </NavLink>
             <NavLink 
               to="/products" 
+              onClick={toggleMenu}
               className={({ isActive }) => 
                 `text-gray-700 hover:text-emerald-600 ${isActive ? 'text-emerald-700 font-semibold' : ''}`
               }
@@ -217,6 +265,7 @@ const Header = () => {
             </NavLink>
             <NavLink 
               to="/contact" 
+              onClick={toggleMenu}
               className={({ isActive }) => 
                 `text-gray-700 hover:text-emerald-600 ${isActive ? 'text-emerald-700 font-semibold' : ''}`
               }
