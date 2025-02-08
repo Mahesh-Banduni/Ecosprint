@@ -44,9 +44,9 @@ const FilterSidebar = ({ isOpen, onClose }) => {
         className={`
           fixed md:sticky md:top-16 
           ${isOpen ? 'right-0' : '-right-full md:right-0'}
-          top-0 md:top-auto
+          top-0 lg:mt-4 md:mt-4 md:top-auto
           h-full md:h-[calc(100vh-4rem)]
-          sm:w-[280px] md:w-64
+          w-[280px] md:w-60
           bg-white
           transition-all duration-300
           z-50 md:z-30
@@ -57,16 +57,7 @@ const FilterSidebar = ({ isOpen, onClose }) => {
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b">
           <h2 className="text-lg font-semibold">Filters</h2>
-          <div className="border-t bg-white">
-          <div className="flex">
-            <button
-              onClick={resetFilters}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-emerald-100 rounded-md hover:bg-emerald-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-            >
-              Reset Filters
-            </button>
-          </div>
-        </div>
+          
           <button 
             onClick={onClose}
             className="p-1 rounded-full hover:bg-gray-100 md:hidden"
