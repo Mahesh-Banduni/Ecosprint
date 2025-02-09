@@ -4,7 +4,7 @@ const logger = require("../configs/winston.config.js");
 // Controller for creating a new Property
 const createAddress = async (req, res, next) => {
   try {
-    const address = await addressService.createAddress(req.body.userId, req.body);
+    const address = await addressService.createAddress(req.user.id, req.body);
     res.status(201).json({
       success: true,
       data: address,

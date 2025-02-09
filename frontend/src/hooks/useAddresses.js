@@ -1,20 +1,20 @@
 import axiosInstance from "../utils/axiosInstance";
 import { useSelector, useDispatch } from 'react-redux';
 import { useState } from 'react';
-import { setOrderItems, setError, setLoading } from '../store/orderSlice';
+import { setAddresses, setError, setLoading } from '../store/addressesSlice';
 
-export const useOrder = () => {
+export const useAddresses = () => {
     const token = localStorage.getItem("token");
     const dispatch = useDispatch();
-    const { order, total, loading, error } = useSelector(state => state.order);
+    const { addresses, total, loading, error } = useSelector(state => state.addresses);
   
-    const fetchOrders = async () => {
+    const fetchAddress = async () => {
       dispatch(setLoading(true));
       try {
-        const response = await axiosInstance.get(`/order/user`, {
+        const response = await axiosInstance.get(`/users/addresses`, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        dispatch(setOrderItems(response.data));
+        dispatch(setAddresses(response.data));
         dispatch(setLoading(false));
       } catch (error) {
         dispatch(setError(error.response?.data || 'Error fetching cart'));
@@ -23,16 +23,16 @@ export const useOrder = () => {
       }
     };
   
-    const createBuyNowOrder = async (addressId, productId, quantity) => {
+    const addAddress = async (pincode,flatHouseBuildingCompanyApartment,areaStreetSectorVillage,landmark,townCity, state) => {
       dispatch(setLoading(true));
       try {
         const response = await axiosInstance.post(
-          `/orders/buy-now`, 
-          { addressId, productId, quantity}, 
+          `/address/add`, 
+          { pincode, flatHouseBuildingCompanyApartment, phone, areaStreetSectorVillage,landmark,townCity, state}, 
           { headers: { Authorization: `Bearer ${token}` } }
         );
         
-        dispatch(setOrderItems(response.data));
+        dispatch(setProfileData(response.data));
         dispatch(setLoading(false));
       } catch (error) {
         dispatch(setError(error.response?.data || 'Error adding item'));
@@ -41,34 +41,16 @@ export const useOrder = () => {
       }
     };
 
-    const createCartOrder = async (addressId) => {
-        dispatch(setLoading(true));
-        try {
-          const response = await axiosInstance.post(
-            `/orders/cart`, 
-            { addressId}, 
-            { headers: { Authorization: `Bearer ${token}` } }
-          );
-          
-          dispatch(setOrderItems(response.data));
-          dispatch(setLoading(false));
-        } catch (error) {
-          dispatch(setError(error.response?.data || 'Error adding item'));
-          dispatch(setLoading(false));
-          throw error;
-        }
-      };
-
-    const updateOrder = async (orderId, orderStatus) => {
+    const updateAddress = async (addressId, pincode,flatHouseBuildingCompanyApartment,areaStreetSectorVillage,landmark,townCity, state) => {
         dispatch(setLoading(true));
         try {
           const response = await axiosInstance.put(
-            `/orders/:${orderId}/update`, 
-            { orderStatus}, 
+            `/address/:${addressId}/update`, 
+            { pincode, flatHouseBuildingCompanyApartment, phone, areaStreetSectorVillage,landmark,townCity, state}, 
             { headers: { Authorization: `Bearer ${token}` } }
           );
           
-          dispatch(setOrderItems(response.data));
+          dispatch(setProfileData(response.data));
           dispatch(setLoading(false));
         } catch (error) {
           dispatch(setError(error.response?.data || 'Error adding item'));
@@ -77,17 +59,33 @@ export const useOrder = () => {
         }
       };
 
+      const deleteAddress = async (addressId) => {
+        dispatch(setLoading(true));
+        try {
+          const response = await axiosInstance.delete(
+            `/address/:${addressId}/delete`, 
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+          
+          dispatch(setProfileData(response.data));
+          dispatch(setLoading(false));
+        } catch (error) {
+          dispatch(setError(error.response?.data || 'Error adding item'));
+          dispatch(setLoading(false));
+          throw error;
+        }
+      };
   
     return {
       items,
       total,
       loading,
       error,
-      fetchOrders,
-      createBuyNowOrder,
-      createCartOrder,
-      updateOrder
+      fetchAddress,
+      addAddress,
+      updateAddress,
+      deleteAddress
     };
   };
   
-  export default useOrder;
+  export default useAddresses;

@@ -4,7 +4,7 @@ const logger = require("../configs/winston.config.js");
 // Create an order after buy now
 const createBuyNowOrder = async (req, res, next) => {
     try{
-        const {message, order}= await orderService.createBuyNowOrder(req.body.userId, req.body.addressId, req.body);
+        const {message, order}= await orderService.createBuyNowOrder(req.user.id, req.body.addressId, req.body);
         res.status(201).json({ message, order });
     } catch (error) {
         next(error);
@@ -13,7 +13,7 @@ const createBuyNowOrder = async (req, res, next) => {
 // Create an order from the cart
 const createCartOrder = async (req, res, next) => {
     try{
-        const {message, order}= await orderService.createCartOrder(req.body.userId, req.body.addressId);
+        const {message, order}= await orderService.createCartOrder(req.user.id, req.body.addressId);
         res.status(201).json({ message, order });
     } catch (error) {
         next(error);
@@ -43,7 +43,7 @@ const verifyPayment = async (req, res, next) => {
 // Get all orders for a user
 const getOrdersByUserId = async (req, res, next) => {
     try {
-        const orders = await orderService.getOrdersByUserId(req.params.userId);
+        const orders = await orderService.getOrdersByUserId(req.user.id);
         res.status(200).json(orders);
     } catch (error) {
          next(error);

@@ -1,6 +1,7 @@
 const express = require("express");
 const addressController = require("../controllers/address.controller.js");
 const {uploadReviewImage}= require("../middlewares/multer.js");
+const auth = require("../middlewares/auth.js");
 const router = express.Router();
 
 /**
@@ -23,8 +24,6 @@ const router = express.Router();
  *           schema:
  *             type: object
  *             properties:
- *               userId:
- *                 type: string
  *               pincode:
  *                 type: string
  *               flatHouseBuildingCompanyApartment:
@@ -45,7 +44,7 @@ const router = express.Router();
  *       500:
  *         description: Internal Server Error
  */
-router.post("/add", addressController.createAddress);
+router.post("/add",auth, addressController.createAddress);
 
 /**
  * @swagger

@@ -52,25 +52,19 @@ router.post("/register", registerLimiter, userController.createUser);
 
 /**
  * @swagger
- * /users/{id}/details:
+ * /users/details:
  *   get:
  *     summary: Get user by ID
  *     description: Retrieve a user by their ID
  *     tags:
  *       - Users
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
  *     responses:
  *       200:
  *         description: User retrieved successfully
  *       404:
  *         description: User not found
  */
-router.get("/:id/details", userController.getUserById);
+router.get("/details", auth, userController.getUserById);
 
 /**
  * @swagger
@@ -106,18 +100,12 @@ router.get("/all", userController.getAllUsers);
 
 /**
  * @swagger
- * /users/{id}/update:
+ * /users/update:
  *   put:
  *     summary: Update user by ID
  *     description: Update a user's information by their ID
  *     tags:
  *       - Users
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
  *     requestBody:
  *       required: true
  *       content:
@@ -147,29 +135,23 @@ router.get("/all", userController.getAllUsers);
  *       404:
  *         description: User not found
  */
-router.put("/:id/update", uploadPic, userController.updateUser);
+router.put("/update", auth, uploadPic, userController.updateUser);
 
 /**
  * @swagger
- * /users/{id}/delete:
+ * /users/delete:
  *   delete:
  *     summary: Delete user by ID
  *     description: Delete a user by their ID
  *     tags:
  *       - Users
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
  *     responses:
  *       200:
  *         description: User deleted successfully
  *       404:
  *         description: User not found
  */
-router.delete("/:id/delete", userController.deleteUser);
+router.delete("/delete", auth, userController.deleteUser);
 
 /**
  * @swagger
@@ -250,25 +232,19 @@ router.put("/:id/reset-password", userController.resetPassword);
 
 /**
  * @swagger
- * /users/{id}/addresses:
+ * /users/addresses:
  *   get:
- *     summary: User Addressses
+ *     summary: User Addresses
  *     description: Retrieve a list of addresses
  *     tags:
  *       - Users
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: string
  *     responses:
  *       200:
  *         description: List of addresses retrieved successfully
  *       404:
  *         description: No addresses found 
  */
-router.get('/:id/addresses', userController.getUserAddresses);
+router.get('/addresses',auth, userController.getUserAddresses);
 
 /**
  * @swagger

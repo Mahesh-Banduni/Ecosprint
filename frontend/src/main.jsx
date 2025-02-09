@@ -18,8 +18,8 @@ const Home = lazy(() => import("./pages/Home"));
 const Products = lazy(() => import("./pages/Products"));
 const ProductDetails = lazy(() => import("./pages/ProductDetailPage"));
 const Cart = lazy(() => import("./pages/Cart"));
-// const Wishlist = lazy(() => import("./pages/Wishlist"));
-//const Profile = lazy(() => import("./pages/Profile"));
+//const Wishlist = lazy(() => import("./pages/Wishlist"));
+const Profile = lazy(() => import("./pages/Profile"));
 const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
 const ContactUs = lazy(() => import("./pages/ContactUs"));
@@ -71,14 +71,14 @@ const routes = createBrowserRouter([
       //     </Suspense>
       //   ),
       // },
-      // {
-      //   path: "/profile",
-      //   element: (
-      //     <Suspense fallback={<Loader />}>
-      //       <Profile />
-      //     </Suspense>
-      //   ),
-      // },
+      {
+        path: "/profile",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <Profile />
+          </Suspense>
+        ),
+      },
       {
         path: "/login",
         element: (

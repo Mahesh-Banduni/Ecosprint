@@ -6,6 +6,7 @@ import { Menu, X } from 'lucide-react';
 import { logo } from '../utils/icons';
 import { useDispatch } from 'react-redux';
 import { setFilters } from '../store/productSlice';
+import { toast, ToastContainer } from 'react-toastify';
 
 const Header = () => {
   const token = localStorage.getItem("token");
@@ -51,42 +52,45 @@ const Header = () => {
     }
   };
 
-  const handleRegisterClick = () => {
-    navigate('/register');
-    setIsProfileDropdownOpen(false);
-  };
-
-  const handleLoginClick = () => {
-    navigate('/login');
-    setIsProfileDropdownOpen(false);
-  };
-
-  const handleProfileClick = () => {
-    navigate('/profile');
-    setIsProfileDropdownOpen(false);
-  };
-
-  const handleSettingsClick = () => {
-    navigate('/settings');
-    setIsProfileDropdownOpen(false);
-  };
-
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    setIsProfileDropdownOpen(false);
-    navigate('/login');
+    // Show toast notification first
+    toast.success('You are successfully logged out!', {
+      position: "top-center",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      style: {
+        background: '#FAD767',
+        color: '#3C423A',
+        border: '2px solid white',
+      },
+      progressStyle: {
+        background: 'white'
+      }
+    });
+  
+    // Set a timeout for token removal and navigation
+    setTimeout(() => {
+      localStorage.removeItem("token");
+      setIsProfileDropdownOpen(false);
+    }, 2000);
   };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target)) {
-        setIsProfileDropdownOpen(false);
-      }
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setIsMenuOpen(false);
+      // Only prevent default and close dropdowns if clicked outside nav elements
+      if (!event.target.closest('nav')) {
+        if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target)) {
+          setIsProfileDropdownOpen(false);
+        }
+        if (menuRef.current && !menuRef.current.contains(event.target)) {
+          setIsMenuOpen(false);
+        }
       }
     };
-
+  
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
@@ -127,6 +131,7 @@ const Header = () => {
             <h1 className="lg:text-2xl md:text-2xl font-bold text-emerald-950 sm:text-xl uppercase">Ecosprint</h1>
           </Link>
         </div>
+        <ToastContainer />
 
         <div className="hidden md:flex items-center justify-center flex-grow mx-8 max-w-xl">
           <div className="flex items-center w-full border border-gray-300 rounded-md px-3 py-2">
@@ -167,46 +172,54 @@ const Header = () => {
               </button>
             </div>
             {isProfileDropdownOpen && (
-        <div className="absolute right-4 top-16 w-48 bg-white border rounded-md shadow-lg py-1 z-50">
-          {!token ? (
-            <>
-              <button 
-                onClick={handleRegisterClick}
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-              >
-                Register
-              </button>
-              <button 
-                onClick={handleLoginClick}
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-              >
-                Login
-              </button>
-            </>
-          ) : (
-            <>
-              <button 
-                onClick={handleProfileClick}
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-              >
-                My Profile
-              </button>
-              <button 
-                onClick={handleSettingsClick}
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-              >
-                Settings
-              </button>
-              <button 
-                onClick={handleLogout}
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600"
-              >
-                Logout
-              </button>
-            </>
-          )}
-        </div>
-      )}
+  <div className="absolute right-4 top-16 w-48 bg-white border rounded-md shadow-lg py-1 z-50">
+    {!token ? (
+      <>
+        <NavLink 
+          to="/register"
+          onClick={() => setIsProfileDropdownOpen(false)}
+          className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+        >
+          Register
+        </NavLink>
+        <NavLink 
+          to="/login"
+          onClick={() => setIsProfileDropdownOpen(false)}
+          className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+        >
+          Login
+        </NavLink>
+      </>
+    ) : (
+      <div>
+        <ul>
+          <li>
+            <NavLink 
+              to="/profile"
+              onClick={() => setIsProfileDropdownOpen(false)}
+              className={({ isActive }) => 
+                `block w-full text-left px-4 py-2 hover:bg-gray-100 ${isActive ? 'bg-gray-50' : ''}`
+              }
+            >
+              My Account
+            </NavLink>
+          </li>
+          <li>
+            <NavLink 
+              to="/login"
+              onClick={() => {
+                handleLogout();
+              }}
+              className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-black"
+            >
+              Logout
+            </NavLink>
+          </li>
+        </ul>
+      </div>
+    )}
+  </div>
+)}
 
           </div>
         </div>
@@ -272,11 +285,13 @@ const Header = () => {
             >
               Contact
             </NavLink>
+            
           </div>
         </div>
       </div>
     </nav>
   );
+
 };
 
 export default Header;

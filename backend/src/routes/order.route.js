@@ -1,6 +1,7 @@
 const express = require("express");
 const orderController = require("../controllers/order.controller.js");
 const router = express.Router();
+const auth = require("../middlewares/auth.js");
 
 /**
  * @swagger
@@ -11,17 +12,10 @@ const router = express.Router();
 
 /**
  * @swagger
- * /orders/user/{userId}:
+ * /orders/user:
  *   get:
  *     summary: Retrieve all orders for a user.
  *     tags: [Orders]
- *     parameters:
- *       - in: path
- *         name: userId
- *         required: true
- *         schema:
- *           type: string
- *         description: The ID of the user.
  *     responses:
  *       200:
  *         description: A list of orders.
@@ -30,7 +24,7 @@ const router = express.Router();
  *       500:
  *         description: Internal Server Error.
  */
-router.get("/user/:userId", orderController.getOrdersByUserId);
+router.get("/user", auth, orderController.getOrdersByUserId);
 
 /**
  * @swagger
@@ -66,9 +60,6 @@ router.get("/:orderId", orderController.getOrderById);
  *           schema:
  *             type: object
  *             properties:
- *               userId:
- *                 type: string
- *                 description: The ID of the user.
  *               addressId:
  *                 type: string
  *     responses:
@@ -94,9 +85,6 @@ router.post("/cart", orderController.createCartOrder);
  *           schema:
  *             type: object
  *             properties:
- *               userId:
- *                 type: string
- *                 description: The ID of the user.
  *               addressId:
  *                 type: string
  *               productId:
@@ -111,7 +99,7 @@ router.post("/cart", orderController.createCartOrder);
  *       404:
  *         description: Cart or items not found.
  */
-router.post("/buy-now", orderController.createBuyNowOrder);
+router.post("/buy-now", auth, orderController.createBuyNowOrder);
 
 /**
  * @swagger
@@ -165,7 +153,7 @@ router.post("/payment/verify", orderController.verifyPayment);
 
 /**
  * @swagger
- * /orders/{orderId}:
+ * /orders/{orderId}/update:
  *   put:
  *     summary: Update the status of an order.
  *     tags: [Orders]
@@ -193,11 +181,11 @@ router.post("/payment/verify", orderController.verifyPayment);
  *       404:
  *         description: Order not found.
  */
-router.put("/:orderId", orderController.updateOrderShippingStatus);
+router.put("/:orderId/update", orderController.updateOrderShippingStatus);
 
 /**
  * @swagger
- * /orders/{orderId}:
+ * /orders/{orderId}/delete:
  *   delete:
  *     summary: Delete an order by ID.
  *     tags: [Orders]
@@ -214,6 +202,6 @@ router.put("/:orderId", orderController.updateOrderShippingStatus);
  *       404:
  *         description: Order not found.
  */
-router.delete("/:orderId", orderController.deleteOrder);
+router.delete("/:orderId/delete", orderController.deleteOrder);
 
 module.exports = router;
