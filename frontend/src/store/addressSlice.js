@@ -1,19 +1,18 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const addressesSlice = createSlice({
-  name: 'addresses',
+const addressSlice = createSlice({
+  name: 'address',
   initialState: {
-    address: [],
-    total: 0,
+    addresses: [],
     loading: false,
     error: null
   },
   reducers: {
     setAddresses: (state, action) => {
       const addressesData = action.payload.data;
-      state.address = addressesData.address.map(item => ({
+      state.addresses = addressesData.address.map(item => ({
         addressId: item._id,
-        pincode: item.pincode,
+        pincode: item.pincode ,
         flatHouseBuildingCompanyApartment: item.flatHouseBuildingCompanyApartment,
         areaStreetSectorVillage: item.areaStreetSectorVillage,
         landmark: item.landmark,
@@ -30,5 +29,5 @@ const addressesSlice = createSlice({
   }
 });
 
-export const { setAddresses, setLoading, setError } = addressesSlice.actions;
-export default addressesSlice.reducer;
+export const { setAddresses, setLoading, setError } = addressSlice.actions;
+export default addressSlice.reducer;

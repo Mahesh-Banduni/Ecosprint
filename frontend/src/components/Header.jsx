@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { IoSearch } from 'react-icons/io5';
 import { CgProfile } from 'react-icons/cg';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ShoppingBag } from 'lucide-react';
 import { logo } from '../utils/icons';
 import { useDispatch } from 'react-redux';
 import { setFilters } from '../store/productSlice';
@@ -14,10 +14,57 @@ const Header = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isScrolled, setIsScrolled] = useState(false);
   const profileDropdownRef = useRef(null);
   const menuRef = useRef(null);
+  const menuButtonRef = useRef(null);
+  const profileButtonRef = useRef(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // Handle profile dropdown
+      if (profileDropdownRef.current && 
+          !profileDropdownRef.current.contains(event.target) && 
+          !profileButtonRef.current.contains(event.target)) {
+        setIsProfileDropdownOpen(false);
+      }
+
+      // Handle menu dropdown (only on mobile)
+      if (window.innerWidth < 768) {  // md breakpoint
+        if (menuRef.current && 
+            !menuRef.current.contains(event.target) && 
+            !menuButtonRef.current.contains(event.target)) {
+          setIsMenuOpen(false);
+        }
+      }
+    };
+
+    // Handle escape key press
+    const handleEscKey = (event) => {
+      if (event.key === 'Escape') {
+        setIsProfileDropdownOpen(false);
+        setIsMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleEscKey);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscKey);
+    };
+  }, []);
 
   const handleSearchClick = () => {
     if (searchQuery.trim()) {
@@ -53,7 +100,6 @@ const Header = () => {
   };
 
   const handleLogout = () => {
-    // Show toast notification first
     toast.success('You are successfully logged out!', {
       position: "top-center",
       autoClose: 2000,
@@ -71,227 +117,187 @@ const Header = () => {
       }
     });
   
-    // Set a timeout for token removal and navigation
     setTimeout(() => {
       localStorage.removeItem("token");
       setIsProfileDropdownOpen(false);
     }, 2000);
+
+    navigate('/login');
   };
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      // Only prevent default and close dropdowns if clicked outside nav elements
-      if (!event.target.closest('nav')) {
-        if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target)) {
-          setIsProfileDropdownOpen(false);
-        }
-        if (menuRef.current && !menuRef.current.contains(event.target)) {
-          setIsMenuOpen(false);
-        }
-      }
-    };
-  
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  const toggleSearch = () => {
-    setIsSearchOpen(!isSearchOpen);
-  };
-
-  const toggleProfileDropdown = () => {
-    setIsProfileDropdownOpen(!isProfileDropdownOpen);
-  };
+  const navLinkClasses = ({ isActive, handleClickOutside }) => `
+    relative text-gray-700 hover:text-emerald-600 transition-colors duration-200
+    after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-emerald-500
+    after:left-0 after:bottom-[-4px] after:transition-all after:duration-300
+    hover:after:w-full ${isActive ? 'text-emerald-700 font-semibold after:w-full' : ''}
+  `;
 
   return (
-    <nav className="sticky top-0 z-50 bg-white shadow-md w-full">
-      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center md:hidden">
-          <button 
-            onClick={toggleMenu} 
-            className="text-gray-700 focus:outline-none mr-2"
-          >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
-        </div>
-
-        <div className="flex items-center">
-          <Link to="/" className="flex items-center">
-            <img 
-              src={logo} 
-              alt="Logo" 
-              className="h-10 w-auto mr-2 max-sm:h-8"
-            />
-            <h1 className="lg:text-2xl md:text-2xl font-bold text-emerald-950 sm:text-xl uppercase">Ecosprint</h1>
-          </Link>
-        </div>
-        <ToastContainer />
-
-        <div className="hidden md:flex items-center justify-center flex-grow mx-8 max-w-xl">
-          <div className="flex items-center w-full border border-gray-300 rounded-md px-3 py-2">
-            <input 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyPress={handleKeyPress}
-              type="text" 
-              placeholder="Search..." 
-              className="w-full outline-none text-sm"
-            />
+    <nav className={`sticky top-0 z-50 w-full transition-all duration-300 ${
+      isScrolled ? 'bg-white/95 backdrop-blur-md shadow-lg' : 'bg-white'
+    }`}>
+      <div className="max-w-7xl mx-auto px-2 sm:px-3 py-2 sm:py-4">
+        <div className="flex items-center justify-between w-full">
+          {/* Mobile Menu Button */}
+          <div className="flex items-center md:hidden">
             <button 
-              onClick={handleSearchClick}
-              className="text-gray-500 hover:text-gray-700 focus:outline-none"
+              ref={menuButtonRef}
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="p-1 rounded-lg hover:bg-emerald-50 transition-colors duration-200"
+              aria-label="Toggle menu"
             >
-              <IoSearch className="ml-2" />
-            </button>
-          </div>
-        </div>
-
-        <div className="flex justify-end items-center gap-2">
-          <div className="md:hidden mt-2">
-            <button 
-              onClick={toggleSearch} 
-              className="text-gray-700 focus:outline-none"
-            >
-              <IoSearch size={25} />
+              {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>
 
-          <div className="flex items-center space-x-4">
-            <div className="relative" ref={profileDropdownRef}>
+          {/* Logo */}
+          <div className="flex items-center flex-shrink-0">
+            <Link to="/" className="flex items-center group">
+              <img 
+                src={logo} 
+                alt="Logo" 
+                className="h-8 w-auto min-w-0 mr-1 transition-transform duration-300 group-hover:scale-105"
+              />
+              <h1 className="text-lg sm:text-xl font-bold text-emerald-950 tracking-tight group-hover:text-emerald-700 transition-colors duration-200 truncate">
+                ECOSPRINT
+              </h1>
+            </Link>
+          </div>
+
+          {/* Desktop Search Bar */}
+          <div className="hidden md:flex items-center justify-center flex-grow mx-4 lg:mx-8 max-w-xl">
+            <div className="flex items-center w-full border-2 border-gray-200 hover:border-emerald-300 focus-within:border-emerald-500 rounded-full px-3 py-1.5 transition-all duration-200">
+              <input 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyPress={handleKeyPress}
+                type="text" 
+                placeholder="Search products..." 
+                className="w-full outline-none text-sm bg-transparent"
+              />
               <button 
-                onClick={toggleProfileDropdown} 
-                className="flex items-center text-gray-700 focus:outline-none"
+                onClick={handleSearchClick}
+                className="text-gray-500 hover:text-emerald-600 transition-colors duration-200 flex-shrink-0"
+                aria-label="Search"
               >
-                <CgProfile size={24} className="sm:mr-5 sm:ml-3 md:mr-5" />
+                <IoSearch className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             </div>
-            {isProfileDropdownOpen && (
-  <div className="absolute right-4 top-16 w-48 bg-white border rounded-md shadow-lg py-1 z-50">
-    {!token ? (
-      <>
-        <NavLink 
-          to="/register"
-          onClick={() => setIsProfileDropdownOpen(false)}
-          className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-        >
-          Register
-        </NavLink>
-        <NavLink 
-          to="/login"
-          onClick={() => setIsProfileDropdownOpen(false)}
-          className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-        >
-          Login
-        </NavLink>
-      </>
-    ) : (
-      <div>
-        <ul>
-          <li>
-            <NavLink 
-              to="/profile"
-              onClick={() => setIsProfileDropdownOpen(false)}
-              className={({ isActive }) => 
-                `block w-full text-left px-4 py-2 hover:bg-gray-100 ${isActive ? 'bg-gray-50' : ''}`
-              }
-            >
-              My Account
-            </NavLink>
-          </li>
-          <li>
-            <NavLink 
-              to="/login"
-              onClick={() => {
-                handleLogout();
-              }}
-              className="block w-full text-left px-4 py-2 hover:bg-gray-100 text-black"
-            >
-              Logout
-            </NavLink>
-          </li>
-        </ul>
-      </div>
-    )}
-  </div>
-)}
-
           </div>
-        </div>
-      </div>
 
-      {isSearchOpen && (
-        <div className="md:hidden px-4 pb-3">
-          <div className="flex items-center border border-gray-300 rounded-md px-3 py-2">
-            <input 
-              type="text" 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="Search..." 
-              className="w-full outline-none text-sm"
-            />
+          {/* Right Icons */}
+          <div className="flex items-center gap-1 md:gap-2 lg:gap-3">
             <button 
-              onClick={handleSearchClick}
-              className="text-gray-500 hover:text-gray-700 focus:outline-none"
+              onClick={() => setIsSearchOpen(!isSearchOpen)}
+              className="md:hidden p-1 rounded-lg hover:bg-emerald-50 transition-colors duration-200"
+              aria-label="Toggle search"
             >
-              <IoSearch className="ml-2" />
+              <IoSearch size={20} />
             </button>
+
+            <Link 
+              to="/cart" 
+              className="p-1 rounded-lg hover:bg-emerald-50 transition-colors duration-200"
+              aria-label="Shopping cart"
+            >
+              <ShoppingBag size={20} />
+            </Link>
+
+            <div className="relative" ref={profileDropdownRef}>
+              <button 
+                ref={profileButtonRef}
+                onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                className="p-1 rounded-lg hover:bg-emerald-50 transition-colors duration-200"
+                aria-label="Profile menu"
+              >
+                <CgProfile size={20} />
+              </button>
+
+              {/* Profile Dropdown */}
+              {isProfileDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-40 sm:w-48 bg-white rounded-lg shadow-xl border border-gray-100 py-1 z-50">
+                  {!token ? (
+                    <>
+                      <NavLink 
+                        to="/register"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors duration-200"
+                        onClick={() => setIsProfileDropdownOpen(false)}
+                      >
+                        Register
+                      </NavLink>
+                      <NavLink 
+                        to="/login"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors duration-200"
+                        onClick={() => setIsProfileDropdownOpen(false)}
+                      >
+                        Login
+                      </NavLink>
+                    </>
+                  ) : (
+                    <>
+                      <NavLink 
+                        to="/profile"                        
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors duration-200"
+                        onClick={() => setIsProfileDropdownOpen(false)}
+                      >
+                        My Account
+                      </NavLink>
+                      <button
+                        onClick={handleLogout}
+                        className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors duration-200"
+                      >
+                        Logout
+                      </button>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      )}
 
-      <div ref={menuRef} className={`${isMenuOpen ? 'block' : 'hidden'} md:block bg-white border-t`}>
-        <div className="max-w-7xl mx-auto px-4 py-2">
-          <div className="flex flex-col lg:items-center justify-center md:flex-row space-y-2 md:space-y-0 md:space-x-6">
-            <NavLink 
-              to="/" 
-              onClick={toggleMenu}
-              className={({ isActive }) => 
-                `text-gray-700 hover:text-emerald-600 ${isActive ? 'text-emerald-700 font-semibold' : ''}`
-              }
-            >
-              Home
-            </NavLink>
-            <NavLink 
-              to="/about" 
-              onClick={toggleMenu}
-              className={({ isActive }) => 
-                `text-gray-700 hover:text-emerald-600 ${isActive ? 'text-emerald-700 font-semibold' : ''}`
-              }
-            >
-              About
-            </NavLink>
-            <NavLink 
-              to="/products" 
-              onClick={toggleMenu}
-              className={({ isActive }) => 
-                `text-gray-700 hover:text-emerald-600 ${isActive ? 'text-emerald-700 font-semibold' : ''}`
-              }
-            >
-              Products
-            </NavLink>
-            <NavLink 
-              to="/contact" 
-              onClick={toggleMenu}
-              className={({ isActive }) => 
-                `text-gray-700 hover:text-emerald-600 ${isActive ? 'text-emerald-700 font-semibold' : ''}`
-              }
-            >
-              Contact
-            </NavLink>
-            
+        {/* Mobile Search Bar */}
+        {isSearchOpen && (
+          <div className="md:hidden px-2 pt-2">
+            <div className="flex items-center border-2 border-gray-200 focus-within:border-emerald-500 rounded-full px-3 py-1.5 transition-all duration-200">
+              <input 
+                type="text" 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder="Search products..." 
+                className="w-full outline-none text-sm bg-transparent"
+              />
+              <button 
+                onClick={handleSearchClick}
+                className="text-gray-500 hover:text-emerald-600 transition-colors duration-200"
+                aria-label="Search"
+              >
+                <IoSearch className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Navigation Links */}
+        <div 
+          ref={menuRef} 
+          className={`${
+            isMenuOpen ? 'max-h-64' : 'max-h-0'
+          } md:max-h-none overflow-hidden transition-all duration-300 ease-in-out md:overflow-visible`}
+        >
+          <div className="mt-2 md:mt-4 flex flex-col md:flex-row items-center justify-center space-y-2 md:space-y-0 md:space-x-8">
+            <NavLink to="/" className={navLinkClasses} onClick={() => setIsMenuOpen(false)}>Home</NavLink>
+            <NavLink to="/about" className={navLinkClasses} onClick={() => setIsMenuOpen(false)}>About</NavLink>
+            <NavLink to="/products" className={navLinkClasses} onClick={() => setIsMenuOpen(false)}>Products</NavLink>
+            <NavLink to="/contact" className={navLinkClasses} onClick={() => setIsMenuOpen(false)}>Contact</NavLink>
           </div>
         </div>
       </div>
+      <ToastContainer />
     </nav>
   );
-
 };
+
 
 export default Header;

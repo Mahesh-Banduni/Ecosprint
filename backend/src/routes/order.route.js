@@ -70,7 +70,7 @@ router.get("/:orderId", orderController.getOrderById);
  *       404:
  *         description: Cart or items not found.
  */
-router.post("/cart", orderController.createCartOrder);
+router.post("/cart", auth, orderController.createCartOrder);
 
 /**
  * @swagger
@@ -91,6 +91,8 @@ router.post("/cart", orderController.createCartOrder);
  *                 type: string
  *               quantity:
  *                 type: number
+ *               size:
+ *                 type: string
  *     responses:
  *       201:
  *         description: Order created successfully.

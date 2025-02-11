@@ -44,7 +44,10 @@ const verifyPayment = async (req, res, next) => {
 const getOrdersByUserId = async (req, res, next) => {
     try {
         const orders = await orderService.getOrdersByUserId(req.user.id);
-        res.status(200).json(orders);
+        res.status(200).json({
+            success: true,
+            data: orders,
+          });
     } catch (error) {
          next(error);
     }

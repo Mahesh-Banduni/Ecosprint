@@ -9,7 +9,6 @@ const useProducts = () => {
   const dispatch = useDispatch();
 
   const currentFilters = useSelector(state => state.products.filters);
-  console.log(currentFilters);
   // Initialize with default values
   const defaultFilters = {
     category: [],

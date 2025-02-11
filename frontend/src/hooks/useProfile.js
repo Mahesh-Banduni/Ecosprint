@@ -4,9 +4,11 @@ import { useState } from 'react';
 import { setProfileData, setError, setLoading } from '../store/profileSlice';
 
 export const useProfile = () => {
+    const [status, setStatus] = useState({type:'',message: '' });
     const token = localStorage.getItem("token");
     const dispatch = useDispatch();
-    const { profile, loading, error } = useSelector(state => state.profile);
+    //const { name, email, phone, loading, error } = useSelector(state => state.profile);
+    
   
     const fetchProfile = async () => {
       dispatch(setLoading(true));
@@ -15,6 +17,7 @@ export const useProfile = () => {
           headers: { Authorization: `Bearer ${token}` }
         });
         dispatch(setProfileData(response.data));
+        console.log(response);
         dispatch(setLoading(false));
       } catch (error) {
         dispatch(setError(error.response?.data || 'Error fetching cart'));
@@ -23,29 +26,63 @@ export const useProfile = () => {
       }
     };
   
-    const updateProfile = async (name,email,phone) => {
+    const updateProfile = async (name,phone) => {
+
+        const validateForm = () => {
+            const errors = [];
+            
+            // Name validation
+            if (name?.trim().length < 6) {  // Changed from fullName to name
+                name='';
+              errors.push('Name must be at least 6 characters long');
+            }
+    
+            // Phone validation
+           if (phone?.trim().length < 7 || phone?.trim().length > 11 ) {
+            phone='';
+            errors.push('Enter a valid phone number');
+            }
+        
+            return errors;
+          };
+
+        // Validate form
+    const errors = validateForm();
+    if (errors.length > 0) {
+      setStatus({
+        type: 'error',
+        message: errors.join('. ')
+      });
+      setLoading(false);
+      return;
+    }
+     
       dispatch(setLoading(true));
       try {
-        const response = await axiosInstance.post(
+        const response = await axiosInstance.put(
           `/users/update`, 
-          { name, email, phone}, 
+          { name, phone}, 
           { headers: { Authorization: `Bearer ${token}` } }
         );
         
         dispatch(setProfileData(response.data));
+        setStatus({type:"success",
+            message: response.data.message || 'Profile Updated Successfully!'
+          });
         dispatch(setLoading(false));
       } catch (error) {
         dispatch(setError(error.response?.data || 'Error adding item'));
+        setStatus({type:'error',
+            message: response.data.message || 'Error updating details. Please try again!'
+          });
         dispatch(setLoading(false));
         throw error;
       }
     };
   
     return {
-      items,
-      total,
-      loading,
-      error,
+      status,
+      setStatus,
       fetchProfile,
       updateProfile
     };

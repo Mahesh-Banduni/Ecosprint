@@ -43,6 +43,8 @@ router.get("/user", auth, cartController.getCartByUserId);
  *             type: string
  *           quantity:
  *             type: number
+ *           size:
+ *             type: string
  *     responses:
  *       200:
  *         description: Cart Details

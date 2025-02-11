@@ -65,7 +65,8 @@ const ProductCard = ({ product }) => {
                 <span className="ml-2 text-sm text-gray-500 line-through">
                   ₹{product.price.toFixed(2)}
                 </span>
-                <span className="ml-1 bg-green-100 text-sm text-green-800 px-1 py-1 rounded">
+                <br></br>
+                <span className=" bg-green-100 text-xs text-green-800 px-1 py-1 rounded">
                   {Math.round(((product.price - product.salePrice) / product.price) * 100)}% OFF
                 </span>
               </>

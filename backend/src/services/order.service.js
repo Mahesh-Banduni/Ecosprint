@@ -110,10 +110,12 @@ const createBuyNowOrder = async (userId, addressId, itemData) => {
     const productId=itemData.productId;
     const quantity=itemData.quantity;
     const amount=product.price * quantity;
+    const size=product.sizeType+"-"+itemData.size;
     items.push({
         productId,
         quantity,
-        amount
+        amount,
+        size
     });
     
     const totalAmount = amount + 79;
@@ -193,7 +195,7 @@ const verifyPayment = async (razorpay_order_id, razorpay_payment_id, razorpay_si
 
 // Get all orders for a user
 const getOrdersByUserId = async (userId) => {
-    const orders = await Order.find({ userId }).populate("items.productId");
+    const orders = await Order.find({ userId }).populate("items.productId").populate("addressId");
     if (!orders) throw new NotFoundError("Orders not found");
     return orders;
 };

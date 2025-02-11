@@ -54,7 +54,7 @@ const ProductDetailPage = () => {
       return;
     }
 
-    addItem(id);
+    addItem(id, selectedSize);
     toast.success('Item Added to Cart', {
       position: "top-right",
       autoClose: 5000,

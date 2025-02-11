@@ -23,13 +23,14 @@ export const useCart = () => {
       }
     };
   
-    const addItem = async ( productId) => {
+    const addItem = async ( productId, selectedSize) => {
       const quantity=1;
+      const size=selectedSize;
       dispatch(setLoading(true));
       try {
         const response = await axiosInstance.post(
           `/cart/user/item`, 
-          { productId, quantity }, 
+          { productId, quantity, size }, 
           { headers: { Authorization: `Bearer ${token}` } }
         );
         

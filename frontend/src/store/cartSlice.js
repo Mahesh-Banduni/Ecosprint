@@ -14,8 +14,8 @@ const cartSlice = createSlice({
       state.items = cartData.items.map(item => ({
         id: item.productId._id,
         name: item.productId.productName,
-        price: item.productId.price,
-        size: item.productId.size,
+        price: item.productId.salePrice,
+        size: item.size,
         image: item.productId.images[0],
         quantity: item.quantity,
         amount: item.amount

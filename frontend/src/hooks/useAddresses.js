@@ -1,12 +1,12 @@
 import axiosInstance from "../utils/axiosInstance";
 import { useSelector, useDispatch } from 'react-redux';
 import { useState } from 'react';
-import { setAddresses, setError, setLoading } from '../store/addressesSlice';
+import { setAddresses, setError, setLoading } from '../store/addressSlice';
 
 export const useAddresses = () => {
     const token = localStorage.getItem("token");
     const dispatch = useDispatch();
-    const { addresses, total, loading, error } = useSelector(state => state.addresses);
+    const {addresses, loading, error} = useSelector(state => state.address);
   
     const fetchAddress = async () => {
       dispatch(setLoading(true));
@@ -28,11 +28,9 @@ export const useAddresses = () => {
       try {
         const response = await axiosInstance.post(
           `/address/add`, 
-          { pincode, flatHouseBuildingCompanyApartment, phone, areaStreetSectorVillage,landmark,townCity, state}, 
+          { pincode, flatHouseBuildingCompanyApartment, areaStreetSectorVillage,landmark,townCity, state}, 
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        
-        dispatch(setProfileData(response.data));
         dispatch(setLoading(false));
       } catch (error) {
         dispatch(setError(error.response?.data || 'Error adding item'));
@@ -45,12 +43,10 @@ export const useAddresses = () => {
         dispatch(setLoading(true));
         try {
           const response = await axiosInstance.put(
-            `/address/:${addressId}/update`, 
-            { pincode, flatHouseBuildingCompanyApartment, phone, areaStreetSectorVillage,landmark,townCity, state}, 
+            `/address/${addressId}/update`, 
+            { pincode, flatHouseBuildingCompanyApartment, areaStreetSectorVillage, landmark, townCity, state}, 
             { headers: { Authorization: `Bearer ${token}` } }
           );
-          
-          dispatch(setProfileData(response.data));
           dispatch(setLoading(false));
         } catch (error) {
           dispatch(setError(error.response?.data || 'Error adding item'));
@@ -63,11 +59,13 @@ export const useAddresses = () => {
         dispatch(setLoading(true));
         try {
           const response = await axiosInstance.delete(
-            `/address/:${addressId}/delete`, 
+            `/address/${addressId}/delete`, 
             { headers: { Authorization: `Bearer ${token}` } }
           );
           
-          dispatch(setProfileData(response.data));
+          if(response.data){
+            console.log("Address Deleted");
+          };
           dispatch(setLoading(false));
         } catch (error) {
           dispatch(setError(error.response?.data || 'Error adding item'));
@@ -77,10 +75,9 @@ export const useAddresses = () => {
       };
   
     return {
-      items,
-      total,
-      loading,
-      error,
+        addresses,
+        loading,
+        error,
       fetchAddress,
       addAddress,
       updateAddress,

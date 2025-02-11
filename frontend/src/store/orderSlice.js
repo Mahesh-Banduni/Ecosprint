@@ -3,39 +3,43 @@ import { createSlice } from '@reduxjs/toolkit';
 const orderSlice = createSlice({
   name: 'order',
   initialState: {
-    items: [],
-    orderCode:'',
-    totalAmount: 0,
-    addressId:'',
-    orderId:'',
-    paymentStatus: '',
-    orderStatus:'',
-    orderDate:'',
-    deliveryByDate:'',
+    orders: [],
     loading: false,
     error: null
   },
   reducers: {
     setOrderItems: (state, action) => {
-      const orderData = action.payload.data;
-      state.items = orderData.items.map(item => ({
-        productId: item.productId._id,
-        name: item.productId.productName,
-        price: item.productId.price,
-        size: item.productId.size,
-        image: item.productId.images[0],
-        quantity: item.quantity,
-        amount: item.amount
-      }));
-      state.orderId=orderData._id;
-      state.totalAmount=orderData.totalAmount;
-      state.paymentStatus=orderData.paymentStatus;
-      state.orderStatus=orderData.orderStatus;
-      state.orderDate=orderData.createdAt;
-      state.deliveryByDate=orderData.deliveryByDate;
-      state.orderCode=orderData.orderCode;
-      state.addressId=orderData.addressId;
-    },
+        const orderData = action.payload.data;
+        if (!Array.isArray(orderData) || orderData.length === 0) {
+          state.orders = []; // Clear previous orders if no new data
+          return;
+        }
+      
+        // Mapping multiple orders
+        state.orders = orderData.map(order => ({
+          orderId: order._id,
+          totalAmount: order.totalAmount,
+          paymentStatus: order.paymentStatus,
+          orderStatus: order.orderStatus,
+          orderDate: order.createdAt,
+          deliveryByDate: order.deliveryByDate,
+          orderCode: order.orderCode,
+          addressId: order.addressId,
+          createdAt: order.createdAt,
+          deliveryDate:order.deliveryDate,
+          items: order.items.map(item => ({
+            productId: item.productId._id,
+            name: item.productId.productName,
+            price: item.productId.price,
+            size: item.size,
+            image: item.productId.images[0],
+            quantity: item.quantity,
+            amount: item.amount
+          }))
+        }));
+      
+      },
+      
     setLoading: (state, action) => {
       state.loading = action.payload;
     },

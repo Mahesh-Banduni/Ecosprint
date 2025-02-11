@@ -6,12 +6,11 @@ import { setOrderItems, setError, setLoading } from '../store/orderSlice';
 export const useOrder = () => {
     const token = localStorage.getItem("token");
     const dispatch = useDispatch();
-    const { order, total, loading, error } = useSelector(state => state.order);
   
     const fetchOrders = async () => {
       dispatch(setLoading(true));
       try {
-        const response = await axiosInstance.get(`/order/user`, {
+        const response = await axiosInstance.get(`/orders/user`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         dispatch(setOrderItems(response.data));
@@ -23,12 +22,12 @@ export const useOrder = () => {
       }
     };
   
-    const createBuyNowOrder = async (addressId, productId, quantity) => {
+    const createBuyNowOrder = async (addressId, productId, quantity,size) => {
       dispatch(setLoading(true));
       try {
         const response = await axiosInstance.post(
           `/orders/buy-now`, 
-          { addressId, productId, quantity}, 
+          { addressId, productId, quantity, size}, 
           { headers: { Authorization: `Bearer ${token}` } }
         );
         
@@ -79,10 +78,6 @@ export const useOrder = () => {
 
   
     return {
-      items,
-      total,
-      loading,
-      error,
       fetchOrders,
       createBuyNowOrder,
       createCartOrder,

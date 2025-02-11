@@ -6,7 +6,7 @@ const AboutUsContent = () => {
     <div className="max-w-6xl mx-auto p-8">
       {/* Hero Section */}
       <div className="mb-16 text-center">
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">Walking Together Through Time</h1>
+        <h1 className="text-3xl md:text-4xl lg:text-4xl font-bold text-gray-900 mb-6">Walking Together Through Time</h1>
         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
           Since 1995, EcoSprint has revolutionized the footwear industry by blending traditional craftsmanship with cutting-edge innovation. Every pair of shoes tells a story of dedication, sustainability, and the pursuit of perfect comfort.
         </p>

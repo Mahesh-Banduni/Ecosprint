@@ -42,12 +42,12 @@ const ProductHeader = ({ handleSortChange, products, setFilters }) => {
   return (
     <>
     <div className='flex flex-col justify-between sm:flex-row'>
-    <div className="xl:text-2xl xl:ml-12 xl:mt-7 md:text-2xl md:ml-12 md:mt-7 sm:text-2xl sm:ml-8 sm:mt-7 text-2xl ml-5 mt-7 font-semibold text-gray-600">Showing Results: {products.length} products found</div>
+    <div className=" lg:text-2xl lg:ml-12 lg:mt-7 md:text-2xl md:ml-12 md:mt-7 sm:text-xl sm:ml-8 sm:mt-4 sm:mr-6 text-sm mr-6 ml-5 mt-7 font-semibold text-gray-600">Showing Results: {products.length} products found</div>
     
     <div className="mt-4 ml-4 relative inline-flex gap-2 text-left" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="px-2 py-2 text-left bg-white border rounded-lg shadow-sm hover:bg-emerald-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 flex justify-between items-center"
+        className="px-2 py-2 text-left bg-white border rounded-lg shadow-sm hover:bg-emerald-50 focus:outline-none focus:ring-2 focus:ring-emerald-50 flex justify-between items-center"
       >
         {selectedOption.label} <ChevronDown className="w-4 h-4 ml-2" />
       </button>
@@ -57,7 +57,7 @@ const ProductHeader = ({ handleSortChange, products, setFilters }) => {
             <button
               key={option.value + option.order}
               onClick={() => handleSortByClick(option)}
-              className={`w-full px-4 py-2 text-left hover:bg-emerald-200 ${
+              className={`w-full px-4 py-2 text-left hover:bg-emerald-50 ${
                 selectedOption.value === option.value && selectedOption.order === option.order
                   ? 'bg-emerald-50 text-emerald-700'
                   : 'text-gray-700'
@@ -68,11 +68,11 @@ const ProductHeader = ({ handleSortChange, products, setFilters }) => {
           ))}
         </div>
       )}
-      <div className="border-t bg-white h-full mr-3">
+      <div className="border-t bg-white h-full mr-3 rounded-lg">
           <div className=" text-left">
             <button
               onClick={resetFilters}
-              className="px-2 py-2 bg-white rounded-md hover:bg-emerald-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+              className="px-2 py-2 bg-white hover:bg-emerald-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
             >
               <p className=''>Clear Filters</p>
             </button>

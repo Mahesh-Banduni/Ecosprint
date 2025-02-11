@@ -12,9 +12,9 @@ const profileSlice = createSlice({
   reducers: {
     setProfileData: (state, action) => {
       const profileData = action.payload.data;
-      state.profile = profileData.name;
       state.email=profileData.email;
       state.phone=profileData.phone;
+      state.name=profileData.name;
     },
     setLoading: (state, action) => {
       state.loading = action.payload;

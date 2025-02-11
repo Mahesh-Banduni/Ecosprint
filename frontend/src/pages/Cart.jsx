@@ -39,7 +39,7 @@ const Cart = () => {
     return (
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Shopping Cart</h1>
+          <h1 className="text-xl lg:text-2xl font-semibold">Your Cart</h1>
           <button 
             onClick={() => clearCart(token)}
             className="inline-flex items-center gap-2 bg-red-500 p-2 text-white hover:text-red-700 hover:bg-white hover:border hover:border-red-600"
@@ -48,6 +48,7 @@ const Cart = () => {
             <Trash size={20}></Trash>
           </button>
         </div>
+        <hr></hr>
   
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-4">

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Menu } from "lucide-react";
+import { Menu, User, ShoppingBag, MapPin, LogOut, ChevronRight } from "lucide-react";
 import ProfileSettings from "../components/profile/ProfileSettings";
 import MyOrders from "../components/profile/MyOrders";
 import Addresses from "../components/profile/Addresses";
@@ -9,10 +9,10 @@ import { Navigate, NavLink, useNavigate } from "react-router-dom";
 import Header from "../components/Header";
 
 const Profile = () => {
-  //const { profile, loading, error } = useSelector(state => state.profile);
+  
   const navigate = useNavigate();
   const { handleLogout } = Header;
-  const user=useProfile;
+  const user = useProfile;
   const [activeTab, setActiveTab] = useState("Profile Settings");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef(null);
@@ -38,12 +38,18 @@ const Profile = () => {
     };
   }, []);
 
+  const menuItems = [
+    { title: "Profile Settings", icon: User },
+    { title: "Your Orders", icon: ShoppingBag },
+    { title: "Saved Addresses", icon: MapPin },
+  ];
+
   const renderContent = () => {
     switch (activeTab) {
       case "Profile Settings":
         return <ProfileSettings user={user} />;
       case "Your Orders":
-        return <MyOrders user={user} />;
+        return <MyOrders/>;
       case "Saved Addresses":
         return <Addresses user={user} />;
       default:
@@ -52,61 +58,86 @@ const Profile = () => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-white text-gray-900">
+    <div className="flex flex-col md:flex-row min-h-screen bg-white">
       {/* Mobile Menu Button */}
       <button
-        className="md:hidden p-4 bg-gray-800 text-white flex items-center gap-2"
-        onClick={() => {
-          setIsMenuOpen(!isMenuOpen);
-        }}
+        className="md:hidden p-4 bg-emerald-600 text-white flex items-center justify-between w-full shadow-md relative z-20"
+        onClick={() => setIsMenuOpen(!isMenuOpen)}
       >
-        <Menu />
-        Hello, user
+        <div className="flex items-center gap-2">
+          <Menu className="w-5 h-5" />
+          <span className="font-medium">Menu</span>
+        </div>
+        <span className="text-sm">{activeTab}</span>
       </button>
 
       {/* Sidebar */}
       <div
         ref={menuRef}
-        className={`absolute md:relative md:w-1/4 bg-gray-700 text-white p-6 transition-transform transform ${isMenuOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0 w-3/4 h-full fixed top-0 left-0 md:h-auto`}
+        className={`fixed md:relative md:w-72 bg-white border-r border-emerald-100 shadow-lg md:shadow-none transition-transform duration-300 transform 
+          ${isMenuOpen ? "translate-x-0" : "-translate-x-full"} 
+          md:translate-x-0 w-64 h-full z-30 top-0 left-0`}
       >
-        <h2 className="text-lg sm:text-2xl flex flex-col font-bold mb-4 mt-1 md:overflow-visible">Hello</h2>
-        <div className="flex flex-col md:block md:space-x-0 overflow-x-auto md:overflow-visible">
-          <h2 className="text-lg sm:text-2xl font-bold mb-4 md:overflow-visible">Your Account</h2>
-          <div className="flex flex-col gap-2">
-            {["Profile Settings", "Your Orders", "Saved Addresses"].map((tab) => (
+        <div className="p-6 h-full flex flex-col ">
+          <div className="bg-emerald-50 rounded-lg p-4 mb-6 mt-8 md:mt-0 lg:mt-0">
+            <h2 className="text-xl font-semibold text-emerald-800">Welcome Back!</h2>
+            <p className="text-sm text-emerald-600">Manage your account</p>
+          </div>
+
+          <nav className="flex-1">
+            <div className="space-y-1">
+              {menuItems.map(({ title, icon: Icon }) => (
+                <button
+                  key={title}
+                  onClick={() => {
+                    setActiveTab(title);
+                    setIsMenuOpen(false);
+                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors
+                    ${activeTab === title 
+                      ? "bg-emerald-50 text-emerald-700" 
+                      : "text-gray-600 hover:bg-emerald-50 hover:text-emerald-600"
+                    }`}
+                >
+                  <Icon className="w-5 h-5" />
+                  {title}
+                  <ChevronRight className={`w-4 h-4 ml-auto transition-transform
+                    ${activeTab === title ? "rotate-90" : ""}`}
+                  />
+                </button>
+              ))}
+              
               <NavLink
-                key={tab}
-                className={`p-2 cursor-pointer rounded-lg hover:bg-gray-500 transition text-sm md:text-base ${
-                  activeTab === tab ? "bg-gray-500" : ""
-                }`}
-                onClick={() => {
-                  setActiveTab(tab);
-                  setIsMenuOpen(false);
-                }}
+                to="/cart"
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-600 hover:bg-emerald-50 hover:text-emerald-600"
               >
-                {tab}
+                <ShoppingBag className="w-5 h-5" />
+                Your Cart
               </NavLink>
-            ))}
-            <NavLink
-              to="/cart"
-              className="p-2 cursor-pointer rounded-lg hover:bg-gray-500 transition text-sm md:text-base"
-            >
-              Your Cart
-            </NavLink>
-            <NavLink
-              to="/login"
-              onClick={() => {
-                handleLogout();
-              }}
-              className="p-2 cursor-pointer rounded-lg hover:bg-gray-500 transition text-sm md:text-base"
-            >
-              Logout
-            </NavLink>
+            </div>
+          </nav>
+
+          <button
+            onClick={() => {
+              handleLogout();
+              navigate("/login");
+            }}
+            className="mt-auto flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+          >
+            <LogOut className="w-5 h-5" />
+            Logout
+          </button>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 p-4 md:p-8 bg-gray-50">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-white rounded-xl shadow-sm p-6">
+            {renderContent()}
           </div>
         </div>
       </div>
-      {/* Content */}
-      <div className="w-full md:w-3/4 p-4 md:p-6">{renderContent()}</div>
     </div>
   );
 };

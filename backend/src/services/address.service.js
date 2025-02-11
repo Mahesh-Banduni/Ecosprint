@@ -42,22 +42,22 @@ const updateAddress = async ( addressId, updateData) => {
     if(!address){
         throw new NotFoundError("Address not found");
     }
-    if(address.pincode){
+    if(updateData.pincode){
     address.pincode=updateData.pincode;
     }
-    if(address.flatHouseBuildingCompanyApartment){
+    if(updateData.flatHouseBuildingCompanyApartment){
     address.flatHouseBuildingCompanyApartment=updateData.flatHouseBuildingCompanyApartment;
     }
-    if(address.areaStreetSectorVillage){
+    if(updateData.areaStreetSectorVillage){
     address.areaStreetSectorVillage=updateData.areaStreetSectorVillage;
     }
-    if(address.landmark){
+    if(updateData.landmark){
     address.landmark=updateData.areaStreetSectorVillage;
     }
-    if(address.townCity){
+    if(updateData.townCity){
     address.townCity=updateData.townCity;
     }
-    if(address.state){
+    if(updateData.state){
     address.state=updateData.state;
     }
     await address.save();
