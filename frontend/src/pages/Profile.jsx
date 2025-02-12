@@ -133,7 +133,7 @@ const Profile = () => {
       {/* Main Content */}
       <div className="flex-1 p-4 md:p-8 bg-gray-50">
         <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-xl shadow-sm p-6">
+          <div className="bg-white rounded-xl shadow-sm lg:p-6 md:p-6">
             {renderContent()}
           </div>
         </div>

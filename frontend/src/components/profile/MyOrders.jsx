@@ -1,24 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronDown, ChevronUp, Package, Calendar, Clock, MapPin, Truck,  } from 'lucide-react';
+import { ChevronDown, ChevronUp, Package, Calendar, Clock, MapPin, Truck } from 'lucide-react';
 import useOrder from '../../hooks/useOrder';
 import { useSelector, useDispatch } from 'react-redux';
 
-// Main Orders Component
-const MyOrders = () => {
-const { orders, loading, error } = useSelector(state => state.order);
-
-    const {
-        fetchOrders,
-        createBuyNowOrder,
-        createCartOrder,
-        updateOrder
-      }=useOrder();
-
-      useEffect(() => {
-        fetchOrders();
-      }, []);
-
-// Order Status Badge Component
 const OrderStatusBadge = ({ status }) => {
   const getStatusStyles = () => {
     switch (status) {
@@ -38,49 +22,48 @@ const OrderStatusBadge = ({ status }) => {
   };
 
   return (
-    <span className={`px-5 py-3 rounded-full w-fit text-xs sm:text-sm md:text-md lg:text-leg xl-text-xl ml-6 mt-3 mb-2 font-medium ${getStatusStyles()}`}>
+    <span className={`px-3 py-1.5 rounded-full text-xs sm:text-sm md:px-4 md:py-2 w-fit font-medium ${getStatusStyles()}`}>
       {status}
     </span>
   );
 };
 
-// Order Item Component
 const OrderItem = ({ item }) => (
-  <div className="flex items-center gap-4 py-3 border-b border-gray-100 last:border-0 ">
-    <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center">
+  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 py-4 border-b border-gray-100 last:border-0">
+    <div className="w-20 h-20 sm:w-16 sm:h-16 bg-gray-100 rounded-lg flex items-center justify-center">
       <img 
         src={item.image || "/api/placeholder/64/64"} 
         alt={item.name} 
-        className="w-12 h-12 object-cover rounded"
+        className="w-16 h-16 sm:w-12 sm:h-12 object-cover rounded"
       />
     </div>
-    <div className="flex-1 ">
-      <h4 className="text-sm font-medium text-gray-900">{item.name}</h4>
-      <p className="text-sm text-gray-500">Quantity: {item.quantity}</p>
-      <p className="text-sm text-gray-500">Size: {item.size}</p>
-      <div className='flex flex-row justify-between gap-2'>
-      <div className='inline-flex gap-2'>
-      <p className="text-sm font-medium text-gray-600">Unit Price:</p>
-      <p className="text-sm font-medium text-emerald-600">₹{(item.price)}</p>
+    <div className="flex-1 lg:space-y-2">
+      <h4 className="text-sm sm:text-base font-medium text-gray-900">{item.name}</h4>
+      <div className="flex flex-row sm:flex-row justify-start gap-2 text-xs sm:text-sm">
+        <p className="text-gray-500">Quantity: {item.quantity}</p>
+        <p className="text-gray-500">Size: {item.size}</p>
       </div>
-      <div className='inline-flex gap-2'>
-      <p className="text-sm font-medium text-black">Total:</p>
-      <p className="text-sm font-medium text-emerald-600">₹{(item.price*item.quantity)}</p>
-      </div>
+      <div className="flex flex-col sm:flex-row justify-between text-xs sm:text-sm">
+        <div className="flex gap-2 items-center">
+          <span className="font-medium text-gray-600">Unit Price:</span>
+          <span className="font-medium text-emerald-600">₹{item.price}</span>
+        </div>
+        <div className="flex gap-2 items-center">
+          <span className="font-medium text-gray-900">Total:</span>
+          <span className="font-medium text-emerald-600">₹{item.price * item.quantity}</span>
+        </div>
       </div>
     </div>
   </div>
 );
 
-// Order Summary Component
 const OrderSummary = ({ order }) => (
   <div className="bg-gray-50 rounded-lg p-4 mt-4">
-    <h4 className="font-medium text-gray-900 mb-3">Order Summary</h4>
-    <div className="space-y-2 text-sm">
+    <h4 className="text-sm sm:text-base font-medium text-gray-900 mb-3">Order Summary</h4>
+    <div className="space-y-2 text-xs sm:text-sm">
       <div className="flex justify-between">
         <span className="text-gray-600">Subtotal</span>
         <span className="font-medium">₹{(order.totalAmount - 79).toFixed(2)}</span>
-
       </div>
       <div className="flex justify-between">
         <span className="text-gray-600">Shipping</span>
@@ -96,68 +79,57 @@ const OrderSummary = ({ order }) => (
   </div>
 );
 
-// Order Card Component
 const OrderCard = ({ order }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-      {/* Order Header */}
       <div 
-        className="p-5 cursor-pointer hover:bg-gray-50 transition-colors"
+        className="p-4 sm:p-5 cursor-pointer hover:bg-gray-50 transition-colors"
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        <div className="flex flex-col justify-between mb-2 lg:flex-row md:flex-row xl:flex-row">
+        <div className="flex flex-col sm:flex-row justify-between gap-2 mb-3">
           <div className="flex items-center gap-2">
-            <Package className="w-5 h-5 text-emerald-600" />
-            <span className="font-medium text-wrap text-gray-900 text-xs sm:text-sm md:text-md lg:text-leg xl-text-xl">Order #{order.orderCode}</span>
+            <Package className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
+            <span className="text-xs sm:text-sm font-medium text-gray-900">Order #{order.orderCode}</span>
           </div>
           <OrderStatusBadge status={order.orderStatus} />
         </div>
         
-        <div className="flex flex-col gap-4 text-sm text-gray-600 lg:flex-row md:flex-row xl:flex-row">
-        <div className="flex items-center gap-2">
-  <Calendar className="w-4 h-4" />
-  <span>Order Date:</span>
-  <span>{new Date(order?.createdAt).toLocaleDateString()}</span>
-</div>
-
-<div className="flex items-center gap-2">
-  <Truck className="w-4 h-4" />
-  <span>Delivery Date:</span>
-  <span>{new Date(order?.deliveryDate).toLocaleDateString()}</span>
-</div>
-
-          <div className="flex items-center gap-2 col-span-2 md:col-span-1">
-            {isExpanded ? 
-              <ChevronUp className="w-4 h-4" /> : 
-              <ChevronDown className="w-4 h-4" />
-            }
+        <div className="flex flex-col sm:flex-row gap-3 text-xs sm:text-sm text-gray-600">
+          <div className="flex items-center gap-2">
+            <Calendar className="w-4 h-4" />
+            <span>Order Date: {new Date(order?.createdAt).toLocaleDateString()}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Truck className="w-4 h-4" />
+            <span>Delivery Date: {new Date(order?.deliveryDate).toLocaleDateString()}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
             <span>{isExpanded ? 'Show less' : 'Show more'}</span>
           </div>
         </div>
       </div>
 
-      {/* Expanded Content */}
       {isExpanded && (
         <div className="p-4 border-t border-gray-200">
-          {/* Delivery Address */}
           <div className="mb-4">
             <div className="flex items-center gap-2 mb-2">
               <MapPin className="w-4 h-4 text-gray-600" />
-              <h4 className="font-medium text-gray-900">Delivery Address</h4>
+              <h4 className="text-sm sm:text-base font-medium text-gray-900">Delivery Address</h4>
             </div>
-            <p className="text-sm text-gray-600">
-              {order.addressId?.flatHouseBuildingCompanyApartment}, {order.addressId?.areaStreetSectorVillage}, {order.addressId?.townCity} {order.addressId?.state} {order.addressId?.pincode}
+            <p className="text-xs sm:text-sm text-gray-600">
+              {order.addressId?.flatHouseBuildingCompanyApartment}, {order.addressId?.areaStreetSectorVillage}, 
+              {order.addressId?.townCity} {order.addressId?.state} {order.addressId?.pincode}
             </p>
-            <p className="text-sm text-gray-600">
+            <p className="text-xs sm:text-sm text-gray-600">
               Landmark: {order.addressId?.landmark}
             </p>
           </div>
 
-          {/* Order Items */}
           <div className="border-t border-gray-200 pt-4">
-            <h4 className="font-medium text-gray-900 mb-3">Order Items</h4>
+            <h4 className="text-sm sm:text-base font-medium text-gray-900 mb-3">Order Items</h4>
             <div className="space-y-2">
               {order.items?.map((item) => (
                 <OrderItem key={item.id} item={item} />
@@ -165,7 +137,6 @@ const OrderCard = ({ order }) => {
             </div>
           </div>
 
-          {/* Order Summary */}
           <OrderSummary order={order} />
         </div>
       )}
@@ -173,6 +144,13 @@ const OrderCard = ({ order }) => {
   );
 };
 
+const MyOrders = () => {
+  const { orders, loading, error } = useSelector(state => state.order);
+  const { fetchOrders, createBuyNowOrder, createCartOrder, updateOrder } = useOrder();
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
 
   if (loading) {
     return (
@@ -185,7 +163,7 @@ const OrderCard = ({ order }) => {
   if (error) {
     return (
       <div className="text-center py-8">
-        <p className="text-red-600">{error}</p>
+        <p className="text-sm sm:text-base text-red-600">{error}</p>
       </div>
     );
   }
@@ -193,16 +171,16 @@ const OrderCard = ({ order }) => {
   if (!orders.length) {
     return (
       <div className="text-center py-8">
-        <Package className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-        <h3 className="text-lg font-medium text-gray-900 mb-2">No orders yet</h3>
-        <p className="text-gray-600">When you place orders, they will appear here</p>
+        <Package className="w-10 h-10 sm:w-12 sm:h-12 text-gray-400 mx-auto mb-4" />
+        <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">No orders yet</h3>
+        <p className="text-sm sm:text-base text-gray-600">When you place orders, they will appear here</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-semibold text-gray-900 mb-6">Your Orders</h2>
+    <div className="max-w-4xl mx-auto lg:p-4 lg:space-y-4">
+      <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-6">Your Orders</h2>
       {orders.map((order) => (
         <OrderCard key={order.orderId} order={order} />
       ))}

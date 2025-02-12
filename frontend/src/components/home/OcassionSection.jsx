@@ -69,13 +69,13 @@ const OcassionSection = () => {
           pagination={false}
           breakpoints={{
             1280: {
-              slidesPerView: 4,
+              slidesPerView: 4.2,
             },
             1150: {
               slidesPerView: 3.2,
             },
             1000: {
-              slidesPerView: 3,
+              slidesPerView: 2.8,
             },
             820: {
               slidesPerView: 2.5,
@@ -87,10 +87,10 @@ const OcassionSection = () => {
               slidesPerView: 1.7,
             },
             370: {
-              slidesPerView: 1.3,
+              slidesPerView: 1.5,
             },
             280: {
-              slidesPerView: 1,
+              slidesPerView: 1.2,
             },
           }}
         >

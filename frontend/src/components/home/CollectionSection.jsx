@@ -80,7 +80,7 @@ const CollectionSection = () => {
           pagination={false}
           breakpoints={{
             1280: {
-              slidesPerView: 4.1,
+              slidesPerView: 4,
             },
             1150: {
               slidesPerView: 3.2,
@@ -113,7 +113,7 @@ const CollectionSection = () => {
                 src={category.image}
                 alt={category.name}
                 />
-                <div className="mt-2 mb-3 text-lg sm:text-xl md:text-xl lg:text-1xl xl:text-1xl text-center">{category.name}</div>
+                <div className="mt-2 mb-3 lg:text-xl md:text-xl text-center sm:text-sm">{category.name}</div>
               </div>
             </SwiperSlide>
             
