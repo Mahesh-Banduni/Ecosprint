@@ -22,8 +22,8 @@ const { orders, loading, error } = useSelector(state => state.order);
 const OrderStatusBadge = ({ status }) => {
   const getStatusStyles = () => {
     switch (status) {
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
+      case 'Order Confirmed':
+        return 'bg-green-600 text-white';
       case 'Order Processing':
         return 'bg-blue-100 text-blue-800';
       case 'shipped':
@@ -58,10 +58,15 @@ const OrderItem = ({ item }) => (
       <h4 className="text-sm font-medium text-gray-900">{item.name}</h4>
       <p className="text-sm text-gray-500">Quantity: {item.quantity}</p>
       <p className="text-sm text-gray-500">Size: {item.size}</p>
-      <p className="text-sm font-medium text-emerald-600">₹{item.price.toFixed(2)}</p>
+      <div className='flex flex-row justify-between gap-2'>
+      <div className='inline-flex gap-2'>
+      <p className="text-sm font-medium text-gray-600">Unit Price:</p>
+      <p className="text-sm font-medium text-emerald-600">₹{(item.price)}</p>
+      </div>
       <div className='inline-flex gap-2'>
       <p className="text-sm font-medium text-black">Total:</p>
-      <p className="text-sm font-medium text-emerald-600">₹{(item.price.toFixed(2)*item.quantity)}</p>
+      <p className="text-sm font-medium text-emerald-600">₹{(item.price*item.quantity)}</p>
+      </div>
       </div>
     </div>
   </div>
@@ -99,7 +104,7 @@ const OrderCard = ({ order }) => {
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
       {/* Order Header */}
       <div 
-        className="p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+        className="p-5 cursor-pointer hover:bg-gray-50 transition-colors"
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <div className="flex flex-col justify-between mb-2 lg:flex-row md:flex-row xl:flex-row">

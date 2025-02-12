@@ -48,7 +48,7 @@ const Addresses = () => {
         <AddressForm onSave={handleSave} onCancel={() => setShowForm(false)} initialData={editData} />
       ) : (
         <div>
-          <button onClick={handleAddNew} className="mb-4 bg-green-600 text-white px-4 py-2 rounded hover:bg-emerald-700">+ Add New Address</button>
+          <button onClick={handleAddNew} className="mb-4 bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700">+ Add New Address</button>
           
           {loading ? (
             <p>Loading addresses...</p>

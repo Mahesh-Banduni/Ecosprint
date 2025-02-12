@@ -22,6 +22,27 @@ const ProductDetailPage = () => {
   if (error) return <div className="text-red-500 text-center py-10">{error}</div>;
   if (!product) return null;
 
+  const handleBuyNow = () => {
+    if (!selectedSize) {
+      setStatus('Please select a size!');
+      return;
+    }
+
+    navigate('/checkout', {
+      state: {
+        productData: {
+          productId: id,
+          name: product.productName,
+          image: product.images[0],
+          size: product.sizeType+"-"+selectedSize,
+          price: product.salePrice,
+          quantity: 1,
+          // Add other relevant product details
+        }
+      }
+    });
+  };
+
   const handleAddToCart = () => {
     const token = localStorage.getItem('token');
 
@@ -136,7 +157,7 @@ const ProductDetailPage = () => {
               <button onClick={handleAddToCart} className="w-full py-3 rounded-md text-white font-semibold bg-emerald-600 hover:bg-emerald-700">
                 Add to Cart
               </button>
-              <button onClick={handleAddToCart} className="w-full py-3 rounded-md border border-emerald-600 text-emerald-600 font-bold hover:bg-emerald-50">
+              <button onClick={handleBuyNow} className="w-full py-3 rounded-md border border-emerald-600 text-emerald-600 font-bold hover:bg-emerald-50">
                 Buy Now
               </button>
             </div>

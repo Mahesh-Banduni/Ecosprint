@@ -2,21 +2,32 @@ import React, { useEffect } from 'react';
 import { Trash2, Plus, Minus, Trash } from 'lucide-react';
 import useCart from '../hooks/useCart';
 import { useSelector } from 'react-redux';
-import { Link, redirect } from 'react-router-dom';
+import { Link, redirect, useNavigate } from 'react-router-dom';
 import CartItem from '../components/cart/CartItem';
 
 const Cart = () => {
+  
+      const navigate = useNavigate();
     const token = localStorage.getItem('token');
     const { items, total, loading, updateItem, removeItem, clearCart, fetchCart } = useCart();
   
     useEffect(() => {
       if (token) {
-        fetchCart(token);
+        fetchCart();
       }
       else if(!token){
         redirect("/login");
       }
     }, [token]);
+
+    const handleCartProceeding = () => {
+  
+      navigate('/checkout', {
+        state: {
+          productData: items
+        }
+      });
+    };
   
     if (loading) {
       return <div className="flex justify-center items-center h-96">Loading...</div>;
@@ -56,7 +67,7 @@ const Cart = () => {
               <CartItem
                 key={item.id}
                 item={item}
-                onUpdateQuantity={(id, quantity) => updateItem(id, quantity)}
+                onUpdateQuantity={(id, quantity, size) => updateItem(id, quantity, size)}
                 onRemove={(id) => removeItem( id)}
               />
             ))}
@@ -78,7 +89,7 @@ const Cart = () => {
                 <span>₹{(total + 79).toFixed(2)}</span>
               </div>
             </div>
-            <button className="w-full bg-emerald-600 text-white py-3 rounded-lg mt-6 hover:bg-emerald-700">
+            <button onClick={handleCartProceeding} className="w-full bg-emerald-600 text-white py-3 rounded-lg mt-6 hover:bg-emerald-700">
               Proceed to Checkout
             </button>
           </div>

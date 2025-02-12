@@ -76,30 +76,66 @@ router.post("/cart", auth, orderController.createCartOrder);
  * @swagger
  * /orders/buy-now:
  *   post:
- *     summary: Create an buy now order.
+ *     summary: Create a "Buy Now" order (Supports single or multiple items).
  *     tags: [Orders]
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               addressId:
- *                 type: string
- *               productId:
- *                 type: string
- *               quantity:
- *                 type: number
- *               size:
- *                 type: string
+ *             oneOf:
+ *               - type: object  # Single item order
+ *                 properties:
+ *                   addressId:
+ *                     type: string
+ *                     description: Address ID for the order
+ *                   productId:
+ *                     type: string
+ *                     description: ID of the product being purchased
+ *                   quantity:
+ *                     type: number
+ *                     description: Quantity of the product
+ *                   size:
+ *                     type: string
+ *                     description: Size of the product
+ *               - type: object  # Multiple items order
+ *                 properties:
+ *                   addressId:
+ *                     type: string
+ *                     description: Address ID for the order
+ *                   items:
+ *                     type: array
+ *                     description: Array of items to order
+ *                     items:
+ *                       type: object
+ *                       properties:
+ *                         productId:
+ *                           type: string
+ *                           description: ID of the product being purchased
+ *                         quantity:
+ *                           type: number
+ *                           description: Quantity of the product
+ *                         size:
+ *                           type: string
+ *                           description: Size of the product
  *     responses:
  *       201:
  *         description: Order created successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 order:
+ *                   type: object
  *       400:
- *         description: Bad request.
+ *         description: Bad request (invalid data or missing fields).
  *       404:
- *         description: Cart or items not found.
+ *         description: Product not found.
+ *       500:
+ *         description: Internal server error.
  */
 router.post("/buy-now", auth, orderController.createBuyNowOrder);
 

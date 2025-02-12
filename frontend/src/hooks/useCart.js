@@ -43,12 +43,13 @@ export const useCart = () => {
       }
     };
   
-    const updateItem = async ( productId, quantity) => {
+    const updateItem = async ( productId, quantity, size) => {
       dispatch(setLoading(true));
+      
       try {
         const response = await axiosInstance.put(
           `/cart/user/item`, 
-          { productId, quantity }, 
+          { productId, quantity , size}, 
           { headers: { Authorization: `Bearer ${token}` } }
         );
         dispatch(setCartItems(response.data));

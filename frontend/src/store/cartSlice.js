@@ -12,7 +12,7 @@ const cartSlice = createSlice({
     setCartItems: (state, action) => {
       const cartData = action.payload.data;
       state.items = cartData.items.map(item => ({
-        id: item.productId._id,
+        productId: item.productId._id,
         name: item.productId.productName,
         price: item.productId.salePrice,
         size: item.size,

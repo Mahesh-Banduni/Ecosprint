@@ -70,6 +70,8 @@ router.post("/user/item", auth, cartController.addItemToCart);
  *                 type: string
  *               quantity:
  *                 type: number
+ *               size:
+ *                 type: string
  *     responses:
  *       200:
  *         description: Updated Cart

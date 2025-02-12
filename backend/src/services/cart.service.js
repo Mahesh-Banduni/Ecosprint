@@ -48,7 +48,7 @@ const addItemToCart = async (userId, { productId, quantity, size }) => {
 };
 
 // Update item quantity in cart
-const updateCartItem = async (userId, { productId, quantity }) => {
+const updateCartItem = async (userId, { productId, quantity, size }) => {
     if (!productId || quantity === undefined || quantity < 0) {
         throw new BadRequestError("Invalid item data");
     }
@@ -64,7 +64,7 @@ const updateCartItem = async (userId, { productId, quantity }) => {
     }
 
     const itemIndex = cart.items.findIndex(
-        (item) => item.productId.toString() === productId
+        (item) => item.productId.toString() === productId && item.size.toString()===size
     );
     if (itemIndex > -1) {
         if (quantity === 0) {

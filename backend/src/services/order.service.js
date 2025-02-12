@@ -93,59 +93,89 @@ const createCartOrder = async (userId, addressId) => {
     return { message: "Order placed successfully", order };
 };
 
-// Create an order
 const createBuyNowOrder = async (userId, addressId, itemData) => {
-    var orderCodeString='ODR';
-    let orderCode;
-    let orderCodeCheck=[];
+    const orderCodePrefix = "ODR";
+    let orderCode, orderCodeCheck;
+
+    // Generate a unique order code
     do {
-        let orderCode1 = await generateOrderCode();
-        orderCode= orderCodeString+orderCode1;
-        // Check if the generated order code already exists
-        orderCodeCheck = await Order.find({ orderCode });
-    } while (orderCodeCheck.length > 0); // Repeat if the order code already exists
+        const generatedCode = await generateOrderCode();
+        orderCode = orderCodePrefix + generatedCode;
+        orderCodeCheck = await Order.exists({ orderCode });
+    } while (orderCodeCheck);
 
-    const product = await Product.findById(itemData.productId);
-    const items=[];
-    const productId=itemData.productId;
-    const quantity=itemData.quantity;
-    const amount=product.price * quantity;
-    const size=product.sizeType+"-"+itemData.size;
-    items.push({
-        productId,
-        quantity,
-        amount,
-        size
-    });
-    
-    const totalAmount = amount + 79;
+    // Normalize `items` to always be an array
+    const items = Array.isArray(itemData.items) ? itemData.items : [{ 
+        productId: itemData.productId, 
+        quantity: itemData.quantity, 
+        size: itemData.size 
+    }];
 
+    const processedItems = [];
+    let totalAmount = 79; // Base shipping cost
+
+    for (const item of items) {
+        const product = await Product.findById(item.productId);
+        if (!product) {
+            throw new NotFoundError(`Product not found for ID ${item.productId}`);
+        }
+
+        const amount = product.salePrice * item.quantity;
+        const size = `${item.size}`;
+
+        processedItems.push({
+            productId: item.productId,
+            quantity: item.quantity,
+            amount,
+            size,
+        });
+
+        totalAmount += amount;
+    }
+
+    // Create the order
     const order = new Order({
         userId,
         orderCode,
-        items,
+        items: processedItems,
         totalAmount,
-        addressId
+        addressId,
+        deliveryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
     });
-    const currentDate = new Date();
-    order.deliveryDate= new Date(currentDate.getTime() + 7 * 24 * 60 * 60 * 1000);
 
     await order.save();
-    const user = await User.findById(userId);
-    user.orders.push(order._id);
-    await user.save();
 
-    // Deduct stock and clear cart
-    for (const item of order.items) {
-        const product = await Product.findById(item.productId._id);
-        if (!product) throw new NotFoundError(`Product not found for ID ${item.productId._id}`);
-        product.stock -= item.quantity;
-        product.orders.push(order._id);
-        await product.save();
-    }
+    // Update user's order history
+    await User.findByIdAndUpdate(userId, { $push: { orders: order._id } });
 
-    return { message: "Order placed successfully", order };
+    // Deduct stock for all items
+    await Promise.all(processedItems.map(async (item) => {
+        await Product.findByIdAndUpdate(item.productId, {
+            $inc: { stock: -item.quantity },
+            $push: { orders: order._id },
+        });
+    }));
+    const cart = await Cart.findOne({ userId });
+    cart.items = [];
+    await cart.save();
+    // Initiate Razorpay payment
+    const razorpayOrder = await razorpay.orders.create({
+        amount: totalAmount * 100, // Convert to paise
+        currency: "INR",
+        receipt: `ORDER_${order.orderCode}`,
+    });
+
+    // Attach Razorpay order ID to order
+    order.paymentId = razorpayOrder.id;
+    await order.save();
+
+    return { 
+        message: "Order placed successfully", 
+        order, 
+        razorpayOrder 
+    };
 };
+
 
 // Initiate Razorpay payment
 const initiatePayment = async (orderId) => {
@@ -187,7 +217,7 @@ const verifyPayment = async (razorpay_order_id, razorpay_payment_id, razorpay_si
     }
     order.paymentStatus = "Paid";
     order.orderStatus="Order Confirmed";
-    order.deliveryDate= new Date(currentDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+    order.deliveryDate= new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
     await order.save();
 
     return { message: "Payment successful", order };

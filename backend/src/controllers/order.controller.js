@@ -4,8 +4,8 @@ const logger = require("../configs/winston.config.js");
 // Create an order after buy now
 const createBuyNowOrder = async (req, res, next) => {
     try{
-        const {message, order}= await orderService.createBuyNowOrder(req.user.id, req.body.addressId, req.body);
-        res.status(201).json({ message, order });
+        const {message, order, razorpayOrder}= await orderService.createBuyNowOrder(req.user.id, req.body.addressId, req.body);
+        res.status(201).json({ message, order, razorpayOrder });
     } catch (error) {
         next(error);
     }

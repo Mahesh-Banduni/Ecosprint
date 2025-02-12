@@ -7,10 +7,6 @@ const ProductDetails = ({ product }) => {
       <table className="w-full">
         <tbody>
           <tr className="border-b">
-            <td className="py-2 text-gray-600">Brand</td>
-            <td className="py-2 font-medium">{product.brand}</td>
-          </tr>
-          <tr className="border-b">
             <td className="py-2 text-gray-600">Category</td>
             <td className="py-2 font-medium">{product.category}</td>
           </tr>
