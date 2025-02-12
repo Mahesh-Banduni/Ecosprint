@@ -30,7 +30,7 @@ const orderSlice = createSlice({
           items: order.items.map(item => ({
             productId: item.productId._id,
             name: item.productId.productName,
-            price: item.productId.price,
+            price: item.productId.salePrice,
             size: item.size,
             image: item.productId.images[0],
             quantity: item.quantity,
