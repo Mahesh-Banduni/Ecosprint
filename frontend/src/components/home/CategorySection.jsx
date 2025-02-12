@@ -90,28 +90,28 @@ const CategorySection = () => {
           pagination={false}
           breakpoints={{
             1280: {
-              slidesPerView: 5,
+              slidesPerView: 5.1,
             },
             1150: {
               slidesPerView: 4.5,
             },
             1000: {
-              slidesPerView: 4,
+              slidesPerView: 4.1,
             },
             820: {
               slidesPerView: 3.5,
             },
             600: {
-              slidesPerView: 3,
+              slidesPerView: 3.1,
             },
             470: {
               slidesPerView: 2.5,
             },
             370: {
-              slidesPerView: 2,
+              slidesPerView: 2.3,
             },
             280: {
-              slidesPerView: 2,
+              slidesPerView: 2.2,
             },
           }}
         >
@@ -137,28 +137,28 @@ const CategorySection = () => {
           pagination={false}
           breakpoints={{
             1280: {
-              slidesPerView: 5,
+              slidesPerView: 5.1,
             },
             1150: {
               slidesPerView: 4.5,
             },
             1000: {
-              slidesPerView: 4,
+              slidesPerView: 4.1,
             },
             820: {
               slidesPerView: 3.5,
             },
             600: {
-              slidesPerView: 3,
+              slidesPerView: 3.1,
             },
             470: {
               slidesPerView: 2.5,
             },
             370: {
-              slidesPerView: 2,
+              slidesPerView: 2.3,
             },
             280: {
-              slidesPerView: 2,
+              slidesPerView: 2.2,
             },
           }}
         >
