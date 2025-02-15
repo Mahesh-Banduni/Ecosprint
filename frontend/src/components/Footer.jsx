@@ -1,7 +1,35 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+
+import { Link, useNavigate, } from 'react-router-dom';
 
 const Footer = () => {
+  
+  const navigate = useNavigate();
+
+  const handleProductClick = () => {
+    const initialFilters = {
+      gender: [],
+      category: [],
+      brand: [],
+      material: [],
+      color: [],
+      occasion: [],
+      season: [],
+      searchQuery: '',
+      priceRange: [0, 10000],
+      isNewArrival: '',
+      isBestSeller: '',
+      isOnSale: '',
+      specialCollection: ''
+    };
+
+    navigate('/products', { 
+      state: { 
+        initialFilters: initialFilters
+      }
+    });
+  };
+
   return (
     <footer className="bg-gray-900 text-gray-300">
       <div className="w-11/12 mx-auto py-8">
@@ -41,7 +69,14 @@ const Footer = () => {
                   <Link to="/about" className="hover:text-white transition-colors">About Us</Link>
                 </li>
                 <li>
-                  <Link to="/products" className="hover:text-white transition-colors">Products</Link>
+                <button 
+              className="hover:text-white transition-colors"
+              onClick={() => {
+                handleProductClick();
+              }}
+            >
+              All Collections
+            </button>
                 </li>
                 <li>
                   <Link to="/contact" className="hover:text-white transition-colors">Contact</Link>

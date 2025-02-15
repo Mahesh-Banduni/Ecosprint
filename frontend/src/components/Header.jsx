@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { IoSearch } from 'react-icons/io5';
 import { CgProfile } from 'react-icons/cg';
 import { Menu, X, ShoppingBag } from 'lucide-react';
@@ -15,12 +15,15 @@ const Header = () => {
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isScrolled, setIsScrolled] = useState(false);
+  const [activeCategory, setActiveCategory] = useState(null);
+  const [activeCollection, setActiveCollection] = useState(false);
   const profileDropdownRef = useRef(null);
   const menuRef = useRef(null);
   const menuButtonRef = useRef(null);
   const profileButtonRef = useRef(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -31,16 +34,85 @@ const Header = () => {
   }, []);
 
   useEffect(() => {
+    if (!location.pathname.includes('/products')) {
+      setActiveCategory(null);
+      setActiveCollection(false);
+    }
+  }, [location]);
+
+  const categories = [
+    { id: 1, name: "New Arrivals", value: 'isNewArrival'},
+    { id: 2, name: "Best Seller", value: 'isBestSeller'},
+    { id: 3, name: "Special Collection", value: 'specialCollection'},
+    { id: 4, name: "Top Discounts", value: 'isOnSale'}
+  ];
+
+  const handleProductClick = () => {
+    const initialFilters = {
+      gender: [],
+      category: [],
+      brand: [],
+      material: [],
+      color: [],
+      occasion: [],
+      season: [],
+      searchQuery: '',
+      priceRange: [0, 10000],
+      isNewArrival: '',
+      isBestSeller: '',
+      isOnSale: '',
+      specialCollection: ''
+    };
+
+    setActiveCategory(null);
+    setActiveCollection(true);
+    setIsMenuOpen(false);
+
+    navigate('/products', { 
+      state: { 
+        initialFilters: initialFilters
+      }
+    });
+  };
+  
+  const handleCollectionClick = (collectionValue) => {
+    const initialFilters = {
+      gender: [],
+      category: [],
+      brand: [],
+      material: [],
+      color: [],
+      occasion: [],
+      season: [],
+      searchQuery: '',
+      priceRange: [0, 10000],
+      isNewArrival: '',
+      isBestSeller: '',
+      isOnSale: '',
+      specialCollection: ''
+    };
+
+    initialFilters[collectionValue] = 'true';
+    setActiveCategory(collectionValue);
+    setActiveCollection(false);
+    setIsMenuOpen(false);
+
+    navigate('/products', { 
+      state: { 
+        initialFilters: initialFilters
+      }
+    });
+  };
+
+  useEffect(() => {
     const handleClickOutside = (event) => {
-      // Handle profile dropdown
       if (profileDropdownRef.current && 
           !profileDropdownRef.current.contains(event.target) && 
           !profileButtonRef.current.contains(event.target)) {
         setIsProfileDropdownOpen(false);
       }
 
-      // Handle menu dropdown (only on mobile)
-      if (window.innerWidth < 768) {  // md breakpoint
+      if (window.innerWidth < 768) {
         if (menuRef.current && 
             !menuRef.current.contains(event.target) && 
             !menuButtonRef.current.contains(event.target)) {
@@ -49,7 +121,6 @@ const Header = () => {
       }
     };
 
-    // Handle escape key press
     const handleEscKey = (event) => {
       if (event.key === 'Escape') {
         setIsProfileDropdownOpen(false);
@@ -125,11 +196,20 @@ const Header = () => {
     navigate('/login');
   };
 
-  const navLinkClasses = ({ isActive, handleClickOutside }) => `
+  const getCategoryClasses = (categoryValue) => `
     relative text-gray-700 hover:text-emerald-600 transition-colors duration-200
     after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-emerald-500
     after:left-0 after:bottom-[-4px] after:transition-all after:duration-300
-    hover:after:w-full ${isActive ? 'text-emerald-700 font-semibold after:w-full' : ''}
+    hover:after:w-full cursor-pointer
+    ${activeCategory === categoryValue ? 'text-emerald-700 font-semibold after:w-full' : ''}
+  `;
+
+  const getAllCollectionsClasses = () => `
+    relative text-gray-700 hover:text-emerald-600 transition-colors duration-200
+    after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-emerald-500
+    after:left-0 after:bottom-[-4px] after:transition-all after:duration-300
+    hover:after:w-full cursor-pointer
+    ${activeCollection && !activeCategory ? 'text-emerald-700 font-semibold after:w-full' : ''}
   `;
 
   return (
@@ -287,10 +367,29 @@ const Header = () => {
           } md:max-h-none overflow-hidden transition-all duration-300 ease-in-out md:overflow-visible`}
         >
           <div className="mt-2 md:mt-4 flex flex-col md:flex-row items-center justify-center space-y-2 md:space-y-0 md:space-x-8">
-            <NavLink to="/" className={navLinkClasses} onClick={() => setIsMenuOpen(false)}>Home</NavLink>
-            <NavLink to="/about" className={navLinkClasses} onClick={() => setIsMenuOpen(false)}>About</NavLink>
-            <NavLink to="/products" className={navLinkClasses} onClick={() => setIsMenuOpen(false)}>Products</NavLink>
-            <NavLink to="/contact" className={navLinkClasses} onClick={() => setIsMenuOpen(false)}>Contact</NavLink>
+            <button 
+              className={getAllCollectionsClasses()}
+              onClick={() => {
+                setActiveCategory(null);
+                setActiveCollection(true);
+                setIsMenuOpen(false);
+                handleProductClick();
+              }}
+            >
+              All Collections
+            </button>
+            {categories.map((category) => (
+              <button 
+                key={category.id}
+                className={getCategoryClasses(category.value)}
+                onClick={() => {
+                  setActiveCollection(false);
+                  handleCollectionClick(category.value);
+                }}
+              >
+                {category.name}
+              </button>
+            ))}
           </div>
         </div>
       </div>
@@ -298,6 +397,5 @@ const Header = () => {
     </nav>
   );
 };
-
 
 export default Header;

@@ -129,7 +129,7 @@ const searchProduct = async (filters, sortBy, sortOrder, searchQuery) => {
         .exec();
 
     if (!filteredProducts || filteredProducts.length === 0) {
-        throw new Error("No product found matching the criteria.");
+        throw new NotFoundError("No product found matching the criteria.");
     }
 
     // If a search query is provided, use js-search for in-memory searching
