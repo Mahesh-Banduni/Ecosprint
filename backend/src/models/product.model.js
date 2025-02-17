@@ -25,10 +25,6 @@ const productSchema = new mongoose.Schema({
     enum: ['Men', 'Women', 'Kids', 'Unisex'],
     required: true
   },
-  brand: {
-    type: String,
-    required: true
-  },
   price: {
     type: Number,
     required: true,

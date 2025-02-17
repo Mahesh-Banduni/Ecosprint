@@ -37,7 +37,6 @@ const createProduct = async (userId, productData, files) => {
     product.gender=productData.gender;
     product.category=productData.category;
     product.material=productData.material;
-    product.brand=productData.brand;
     product.color=productData.color;
     product.materialWeight=productData.materialWeight;
     product.stock=productData.stock;
@@ -152,7 +151,6 @@ const searchProduct = async (filters, sortBy, sortOrder, searchQuery) => {
         searchEngine.addIndex("category"); // Medium priority
         searchEngine.addIndex("description"); // Medium priority
         searchEngine.addIndex("gender"); // Medium priority
-        searchEngine.addIndex("brand"); // Medium priority
         searchEngine.addIndex("occasion"); // Medium priority
         searchEngine.addIndex("season"); // Medium priority
         searchEngine.addIndex("material"); // Medium priority
@@ -213,9 +211,6 @@ const updateProduct = async (userId, productId, productData, files) => {
     }
     if(productData.gender){
         product.gender=productData.gender;
-    }
-    if(productData.brand){
-        product.brand=productData.brand;
     }
     if(productData.color){
         product.color=productData.color;

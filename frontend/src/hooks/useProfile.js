@@ -7,7 +7,7 @@ export const useProfile = () => {
     const [status, setStatus] = useState({type:'',message: '' });
     const token = localStorage.getItem("token");
     const dispatch = useDispatch();
-    //const { name, email, phone, loading, error } = useSelector(state => state.profile);
+    const profile = useSelector(state => state.profile);
     
   
     const fetchProfile = async () => {
@@ -17,11 +17,21 @@ export const useProfile = () => {
           headers: { Authorization: `Bearer ${token}` }
         });
         dispatch(setProfileData(response.data));
-        console.log(response);
         dispatch(setLoading(false));
       } catch (error) {
         dispatch(setError(error.response?.data || 'Error fetching cart'));
         dispatch(setLoading(false));
+        throw error;
+      }
+    };
+
+    const checkRole = async () => {
+      try {
+        const response = await axiosInstance.get(`/users/details`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        return response.data.data.role;
+      } catch (error) {
         throw error;
       }
     };
@@ -82,6 +92,8 @@ export const useProfile = () => {
   
     return {
       status,
+      profile,
+      checkRole,
       setStatus,
       fetchProfile,
       updateProfile

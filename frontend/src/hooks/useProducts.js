@@ -1,4 +1,4 @@
-import { setProducts, setError, setLoading } from '../store/productSlice';
+import { setProducts, setError, setLoading, setSelectedProduct } from '../store/productSlice';
 import axiosInstance from "../utils/axiosInstance";
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -144,6 +144,102 @@ const handleCheckChange = (category, value) => {
     onClose();
   };
 
+
+  const createProduct = async (productData, files) => {
+    dispatch(setLoading(true));
+    try {
+      const formData = new FormData();
+      
+      // Append product data
+      Object.keys(productData).forEach(key => {
+        formData.append(key, productData[key]);
+      });
+      
+      // Append files
+      if (files) {
+        files.forEach(file => {
+          formData.append('images', file);
+        });
+      }
+
+      const response = await axiosInstance.post('/product/add', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
+      return response.data;
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 'Failed to create product';
+      dispatch(setError(errorMessage));
+      throw error;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+  const getProductById = async (productId) => {
+    dispatch(setLoading(true));
+    try {
+      const response = await axiosInstance.get(`/product/${productId}`);
+      dispatch(setSelectedProduct(response.data));
+      return response.data;
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 'Failed to fetch product';
+      dispatch(setError(errorMessage));
+      throw error;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+  const updateProduct = async (productId, productData, files) => {
+    dispatch(setLoading(true));
+    try {
+      const formData = new FormData();
+      
+      // Append product data
+      Object.keys(productData).forEach(key => {
+        formData.append(key, productData[key]);
+      });
+      
+      // Append files
+      if (files) {
+        files.forEach(file => {
+          formData.append('images', file);
+        });
+      }
+
+      const response = await axiosInstance.put(`/product/${productId}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
+      return response.data;
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 'Failed to update product';
+      dispatch(setError(errorMessage));
+      throw error;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+  const deleteProduct = async (productId) => {
+    dispatch(setLoading(true));
+    try {
+      const response = await axiosInstance.delete(`/product/${productId}`);
+      return response.data;
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 'Failed to delete product';
+      dispatch(setError(errorMessage));
+      throw error;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
   // Reset all filters
   const resetFilters = () => {
     const resetState = {
@@ -253,8 +349,26 @@ const handleCheckChange = (category, value) => {
     };
   };
 
-  return { fetchProducts, debouncedFetchProducts: debouncedFetchProducts(fetchProducts),defaultFilters, handleSortChange,handleCheckChange, currentFilters, localFilters,  setLocalFilters, expandedSections, filterCategories, toggleSection, handleFilterChange, handlePriceChange, applyFilters, resetFilters};
+  return { 
+    fetchProducts, 
+    debouncedFetchProducts: debouncedFetchProducts(fetchProducts),
+    defaultFilters, 
+    handleSortChange,
+    handleCheckChange, 
+    currentFilters, 
+    localFilters,  
+    setLocalFilters, 
+    expandedSections, 
+    filterCategories, 
+    toggleSection, 
+    handleFilterChange, 
+    handlePriceChange, 
+    applyFilters, 
+    resetFilters, 
+    createProduct,
+    getProductById,
+    updateProduct,
+    deleteProduct};
 };
 
 export default useProducts;
-

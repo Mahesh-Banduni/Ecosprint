@@ -7,11 +7,11 @@ import useProfile from "../hooks/useProfile";
 import { useSelector, useDispatch } from 'react-redux';
 import { Navigate, NavLink, useNavigate } from "react-router-dom";
 import Header from "../components/Header";
+import { toast, ToastContainer } from "react-toastify";
 
 const Profile = () => {
   
   const navigate = useNavigate();
-  const { handleLogout } = Header;
   const user = useProfile;
   const [activeTab, setActiveTab] = useState("Profile Settings");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -44,6 +44,31 @@ const Profile = () => {
     { title: "Saved Addresses", icon: MapPin },
   ];
 
+  const handleLogout = () => {
+        toast.success('You are successfully logged out!', {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          style: {
+            background: '#FAD767',
+            color: '#3C423A',
+            border: '2px solid white',
+          },
+          progressStyle: {
+            background: 'white'
+          }
+        });
+      
+        setTimeout(() => {
+          localStorage.removeItem("token");
+        }, 2000);
+    
+        navigate('/login');
+      };
+
   const renderContent = () => {
     switch (activeTab) {
       case "Profile Settings":
@@ -71,6 +96,7 @@ const Profile = () => {
         <span className="text-sm">{activeTab}</span>
       </button>
 
+      <ToastContainer />
       {/* Sidebar */}
       <div
         ref={menuRef}
@@ -118,10 +144,7 @@ const Profile = () => {
           </nav>
 
           <button
-            onClick={() => {
-              handleLogout();
-              navigate("/login");
-            }}
+            onClick={handleLogout}
             className="mt-auto flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors"
           >
             <LogOut className="w-5 h-5" />

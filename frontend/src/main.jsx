@@ -19,6 +19,7 @@ const Products = lazy(() => import("./pages/Products"));
 const ProductDetails = lazy(() => import("./pages/ProductDetailPage"));
 const Cart = lazy(() => import("./pages/Cart"));
 const Checkout = lazy(() => import("./pages/Checkout"));
+const AdminDashboard= lazy(() => import('./pages/AdminDashboard'));
 const Profile = lazy(() => import("./pages/Profile"));
 const Login = lazy(() => import("./pages/Login"));
 const Register = lazy(() => import("./pages/Register"));
@@ -100,6 +101,14 @@ const routes = createBrowserRouter([
         element: (
           <Suspense fallback={<Loader />}>
             <ContactUs />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/admin-dashboard",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <AdminDashboard />
           </Suspense>
         ),
       },

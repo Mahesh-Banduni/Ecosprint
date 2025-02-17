@@ -18,7 +18,11 @@ const ProductDetailPage = () => {
   const [selectedSize, setSelectedSize] = useState(null);
   const [status, setStatus] = useState('');
 
-  if (loading) return <div className="text-center py-10">Loading...</div>;
+  if (loading) return (
+    <div className="flex justify-center items-center h-full">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+    </div>
+  );
   if (error) return <div className="text-red-500 text-center py-10">{error}</div>;
   if (!product) return null;
 

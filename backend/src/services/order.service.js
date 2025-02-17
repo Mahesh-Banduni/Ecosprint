@@ -280,41 +280,57 @@ const deleteOrder = async (orderId) => {
     return { message: "Order deleted successfully", order };
 };
 
-const getAllOrders = async (filters, sortBy, sortOrder) => {
+const getAllOrders = async (filters) => {
     const query = {};
 
     // Apply filters
     if (filters.category) query.category = filters.category;
-    if (filters.brand) query.brand = filters.brand;
-    
-    if (filters.brand) query.brand = filters.brand;
-    if (filters.brand) query.brand = filters.brand;
-    if (filters.availability === "exclude out of stock") {
-        query.stockStatus = "in-stock";
-    }
+    if (filters.orderStatus) query.orderStatus= filters.orderStatus;
 
     // Advanced price filter (minPrice, maxPrice)
-    if (filters.minPrice || filters.maxPrice) {
-        query.totalAmount = {};
-        if (filters.minPrice) query.totalAmount.$gte = filters.minPrice;
-        if (filters.maxPrice) query.totalAmount.$lte = filters.maxPrice;
+    if (filters.duration) {
+        let startDate = null;
+        let endDate = new Date(); // Default end date is today
+        const today = new Date();
+    
+        // Past durations
+        if (filters.duration === "Past 1 Week") {
+            startDate = new Date();
+            startDate.setDate(today.getDate() - 7);
+        } else if (filters.duration === "Past 1 Month") {
+            startDate = new Date();
+            startDate.setMonth(today.getMonth() - 1);
+        } else if (filters.duration === "Past 1 Last Quarter") {
+            const currentQuarter = Math.floor(today.getMonth() / 3); // Get current quarter (0-3)
+            const lastQuarterEndMonth = currentQuarter * 3 - 1; // Last quarter's last month
+            const lastQuarterStartMonth = lastQuarterEndMonth - 2; // Last quarter's first month
+    
+            startDate = new Date(today.getFullYear(), lastQuarterStartMonth, 1);
+            endDate = new Date(today.getFullYear(), lastQuarterEndMonth + 1, 0); // Last day of last quarter
+        } else if (filters.duration === "Past 1 Last Year") {
+            startDate = new Date(today.getFullYear() - 1, 0, 1); // January 1st of last year
+            endDate = new Date(today.getFullYear() - 1, 11, 31); // December 31st of last year
+        }
+    
+        // Apply date filter to the query
+        if (startDate) {
+            query.createdAt = { $gte: startDate };
+            if (filters.duration.includes("Past 1 Last Quarter") || filters.duration.includes("Past 1 Last Year")) {
+                query.createdAt.$lte = endDate;
+            }
+        }
+
     }
-
-    // Define sorting
-    const sortCriteria = {};
-    if (sortBy) sortCriteria[sortBy] = sortOrder;
-
+    
     // Query database with filters and sorting
-    const filteredProducts = await Product.find(query)
-        .sort(sortCriteria)
-        .exec();
+    const filteredOrders = await Order.find(query).exec();
 
-    if (!filteredProducts || filteredProducts.length === 0) {
-        throw new Error("No product found matching the criteria.");
+    if (!filteredOrders || filteredOrders.length === 0) {
+        throw new Error("No orders found matching the criteria.");
     }
 
     // If a search query is provided, use js-search for in-memory searching
-    let finalResults = filteredProducts;
+    let finalResults = filteredOrders;
     
     return finalResults;
 };
@@ -328,4 +344,5 @@ module.exports = {
     getOrderById,
     updateOrderShippingStatus,
     deleteOrder,
+    getAllOrders
 };

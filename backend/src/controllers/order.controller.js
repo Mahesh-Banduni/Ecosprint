@@ -83,4 +83,25 @@ const deleteOrder = async (req, res, next) => {
     }
 };
 
-module.exports={createBuyNowOrder, createCartOrder, initiatePayment, verifyPayment, getOrderById, getOrdersByUserId, updateOrderShippingStatus, deleteOrder};
+//Get All orders
+const getAllOrders = async(req, res, next) =>{
+    try{
+            const filters = {
+                category: req.query.category,
+                duration: req.query.duration,
+                orderStatus: req.query.orderStatus,
+              };
+          
+            const orders= await orderService.getAllOrders(filters);
+            res.status(200).json({
+                success: true,
+                data: orders,
+              });
+        }
+        catch(error){
+          //console.log(error);
+          next(error);
+        }
+}
+
+module.exports={createBuyNowOrder, createCartOrder, initiatePayment, verifyPayment, getOrderById, getOrdersByUserId, updateOrderShippingStatus, deleteOrder, getAllOrders};

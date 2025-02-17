@@ -30,7 +30,11 @@ const Cart = () => {
     };
   
     if (loading) {
-      return <div className="flex justify-center items-center h-96">Loading...</div>;
+      return (
+        <div className="flex justify-center items-center h-full">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+        </div>
+      );
     }
   
     if (items.length === 0) {

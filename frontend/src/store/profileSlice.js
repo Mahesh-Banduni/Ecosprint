@@ -6,6 +6,7 @@ const profileSlice = createSlice({
     name:'',
     email:'',
     phone:'',
+    role: '',
     loading: false,
     error: null
   },
@@ -15,6 +16,7 @@ const profileSlice = createSlice({
       state.email=profileData.email;
       state.phone=profileData.phone;
       state.name=profileData.name;
+      state.role=profileData.role;
     },
     setLoading: (state, action) => {
       state.loading = action.payload;
