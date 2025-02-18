@@ -225,7 +225,7 @@ const verifyPayment = async (razorpay_order_id, razorpay_payment_id, razorpay_si
 
 // Get all orders for a user
 const getOrdersByUserId = async (userId) => {
-    const orders = await Order.find({ userId }).populate("items.productId").populate("addressId");
+    const orders = await Order.find({ userId }).populate("items.productId").populate("addressId").populate("userId","name phone email");
     if (!orders) throw new NotFoundError("Orders not found");
     return orders;
 };
@@ -239,7 +239,7 @@ const getOrderById = async (orderId) => {
 
 // Update order status
 const updateOrderShippingStatus = async (orderId, status) => {
-    const order = await Order.findById(orderId).populate("items.productId");
+    const order = await Order.findById(orderId);
     if (!order) throw new NotFoundError("Order not found");
     if (!status) throw new BadRequestError("Order status is required");
 
@@ -254,9 +254,9 @@ const updateOrderShippingStatus = async (orderId, status) => {
             }
         }
     }
-    const updatedOrder = await Order.findByIdAndUpdate(orderId, { status }, { new: true });
-    if (!updatedOrder) throw new NotFoundError("Order not found");
-    return updatedOrder;
+    order.orderStatus=status;
+    await order.save();
+    return order;
 };
 
 
@@ -300,7 +300,7 @@ const getAllOrders = async (filters) => {
         } else if (filters.duration === "Past 1 Month") {
             startDate = new Date();
             startDate.setMonth(today.getMonth() - 1);
-        } else if (filters.duration === "Past 1 Last Quarter") {
+        } else if (filters.duration === "Past 1 Quarter") {
             const currentQuarter = Math.floor(today.getMonth() / 3); // Get current quarter (0-3)
             const lastQuarterEndMonth = currentQuarter * 3 - 1; // Last quarter's last month
             const lastQuarterStartMonth = lastQuarterEndMonth - 2; // Last quarter's first month
@@ -323,7 +323,7 @@ const getAllOrders = async (filters) => {
     }
     
     // Query database with filters and sorting
-    const filteredOrders = await Order.find(query).exec();
+    const filteredOrders = await Order.find(query).populate("userId","name phone email").populate("addressId").populate("items.productId").exec();
 
     if (!filteredOrders || filteredOrders.length === 0) {
         throw new Error("No orders found matching the criteria.");

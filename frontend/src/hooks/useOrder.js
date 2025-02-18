@@ -21,6 +21,21 @@ export const useOrder = () => {
         throw error;
       }
     };
+
+    const fetchAllOrders = async () => {
+      dispatch(setLoading(true));
+      try {
+        const response = await axiosInstance.get(`/orders/`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        dispatch(setOrderItems(response.data));
+        dispatch(setLoading(false));
+      } catch (error) {
+        dispatch(setError(error.response?.data || 'Error fetching cart'));
+        dispatch(setLoading(false));
+        throw error;
+      }
+    };
   
     const createBuyNowOrder = async (addressId, productId, quantity,size) => {
       dispatch(setLoading(true));
@@ -62,7 +77,7 @@ export const useOrder = () => {
         dispatch(setLoading(true));
         try {
           const response = await axiosInstance.put(
-            `/orders/:${orderId}/update`, 
+            `/orders/${orderId}/update`, 
             { orderStatus}, 
             { headers: { Authorization: `Bearer ${token}` } }
           );
@@ -81,7 +96,8 @@ export const useOrder = () => {
       fetchOrders,
       createBuyNowOrder,
       createCartOrder,
-      updateOrder
+      updateOrder,
+      fetchAllOrders
     };
   };
   

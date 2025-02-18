@@ -1,7 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { ChevronDown, ChevronUp, Package, Calendar, Clock, MapPin, Truck, User, Phone, PersonStanding, Mail } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  ChevronDown,
+  ChevronUp,
+  Package,
+  Calendar,
+  Truck,
+  User,
+  Phone,
+  Mail,
+  MapPin,
+} from 'lucide-react';
 import useOrder from '../../hooks/useOrder';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { toast, ToastContainer } from 'react-toastify';
 
 const OrderStatusBadge = ({ status }) => {
   const getStatusStyles = () => {
@@ -22,7 +33,9 @@ const OrderStatusBadge = ({ status }) => {
   };
 
   return (
-    <span className={`px-3 py-1.5 rounded-full text-xs sm:text-sm md:px-4 md:py-2 w-fit font-medium ${getStatusStyles()}`}>
+    <span
+      className={`px-3 py-1.5 rounded-full text-xs sm:text-sm md:px-4 md:py-2 w-fit font-medium ${getStatusStyles()}`}
+    >
       {status}
     </span>
   );
@@ -31,9 +44,9 @@ const OrderStatusBadge = ({ status }) => {
 const OrderItem = ({ item }) => (
   <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 py-4 border-b border-gray-100 last:border-0">
     <div className="w-20 h-20 sm:w-16 sm:h-16 bg-gray-100 rounded-lg flex items-center justify-center">
-      <img 
-        src={item.image || "/api/placeholder/64/64"} 
-        alt={item.name} 
+      <img
+        src={item.image || '/api/placeholder/64/64'}
+        alt={item.name}
         className="w-16 h-16 sm:w-12 sm:h-12 object-cover rounded"
       />
     </div>
@@ -81,81 +94,177 @@ const OrderSummary = ({ order }) => (
 
 const OrderCard = ({ order }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isOrderStatusMenuOpen, setIsOrderStatusMenuOpen] = useState(false);
+  const { updateOrder, fetchAllOrders } = useOrder();
+  const [selectedOption, setSelectedOption] = useState(order.orderStatus);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOrderStatusMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleOrderStatusChange = (option) => {
+    setSelectedOption(option.value);
+    updateOrder(order.orderId, option.value);
+    fetchAllOrders();
+    setIsOrderStatusMenuOpen(false);
+    toast.success(
+      'Order #' + order.orderCode + ' updated successfully',
+      {
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        style: {
+          background: '#FAD767',
+          color: '#3C423A',
+          border: '2px solid white',
+        },
+        progressStyle: {
+          background: 'white',
+        },
+      }
+    );
+  };
+
+  const toggleDropdown = (e) => {
+    e.stopPropagation(); // Prevent the card expansion when clicking the status badge
+    setIsOrderStatusMenuOpen(!isOrderStatusMenuOpen);
+  };
+
+  const orderStatusOptions = [
+    { value: 'Order Processing', label: 'Order Processing' },
+    { value: 'Order Confirmed', label: 'Order Confirmed' },
+    { value: 'Order Packed', label: 'Order Packed' },
+    { value: 'Order Shipped', label: 'Order Shipped' },
+    { value: 'Out for Delivery', label: 'Out for Delivery' },
+    { value: 'Order Completed', label: 'Order Completed' },
+    { value: 'Order Cancelled', label: 'Order Cancelled' },
+    { value: 'Order Replacement Requested', label: 'Order Replacement Requested' },
+    { value: 'Order Replacement Approved', label: 'Order Replacement Approved' },
+    { value: 'Replacement Order Processing', label: 'Replacement Order Processing' },
+    { value: 'Replacement Order Packed', label: 'Replacement Order Packed' },
+    { value: 'Replacement Order Shipped', label: 'Replacement Order Shipped' },
+    { value: 'Replacement Order Out for Delivery', label: 'Replacement Order Out for Delivery' },
+    { value: 'Replacement Order Completed', label: 'Replacement Order Completed' },
+  ];
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-      <div 
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden relative">
+      <div
         className="p-4 sm:p-5 cursor-pointer hover:bg-gray-50 transition-colors"
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <div className="flex flex-col sm:flex-row justify-between gap-2 mb-3">
           <div className="flex items-center gap-2">
             <Package className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
-            <span className="text-xs sm:text-sm font-medium text-gray-900">Order #{order.orderCode}</span>
+            <span className="text-xs sm:text-sm font-medium text-gray-900">
+              Order #{order.orderCode}
+            </span>
           </div>
-          <OrderStatusBadge status={order.orderStatus} />
+
+          {/* Order Status Badge and Dropdown */}
+          <div className="relative" ref={dropdownRef}>
+            <button onClick={toggleDropdown} className="focus:outline-none">
+              <OrderStatusBadge status={selectedOption} />
+            </button>
+
+            {/* Dropdown Menu */}
+            {isOrderStatusMenuOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
+                {orderStatusOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleOrderStatusChange(option);
+                    }}
+                    className={`w-full px-4 py-2 text-left hover:bg-emerald-50 ${
+                      selectedOption === option.value
+                        ? 'bg-emerald-50 text-emerald-700'
+                        : 'text-gray-700'
+                    }`}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
-        
+
         <div className="flex flex-col sm:flex-row gap-3 text-xs sm:text-sm text-gray-600">
           <div className="flex items-center gap-2">
             <Calendar className="w-4 h-4" />
-            <span>Order Date: {new Date(order?.createdAt).toLocaleDateString()}</span>
+            <span>
+              Order Date: {new Date(order?.createdAt).toLocaleDateString()}
+            </span>
           </div>
           <div className="flex items-center gap-2">
             <Truck className="w-4 h-4" />
-            <span>Delivery Date: {new Date(order?.deliveryDate).toLocaleDateString()}</span>
+            <span>
+              Delivery Date: {new Date(order?.deliveryDate).toLocaleDateString()}
+            </span>
           </div>
           <div className="flex items-center gap-2">
-            {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            {isExpanded ? (
+              <ChevronUp className="w-4 h-4" />
+            ) : (
+              <ChevronDown className="w-4 h-4" />
+            )}
             <span>{isExpanded ? 'Show less' : 'Show more'}</span>
           </div>
         </div>
       </div>
 
+      {/* Expanded Order Details */}
       {isExpanded && (
         <div className="p-4 border-t border-gray-200">
-            <div className="mb-4">
+          <div className="mb-4">
             <div className="flex items-center gap-2 mb-2">
               <User className="w-4 h-4 text-gray-600" />
-              <h4 className="text-sm sm:text-base font-medium text-gray-900">Customer Information</h4>
+              <h4 className="text-sm sm:text-base font-medium text-gray-900">
+                Customer Information
+              </h4>
             </div>
-            <div className="text-xs sm:text-sm text-gray-600 flex flex-col gap-2 ">
-                <div className='flex gap-1 flex-row'>
-                <div className='font-semibold'>
-                    Name
-                </div>
-                <div>
-                    {/* {order.user.name} */}: mss
-                </div>
+            <div className="text-xs sm:text-sm text-gray-600 flex flex-col gap-2">
+              <div className="flex gap-1">
+                <div className="font-semibold ml-2">Name :</div>
+                <div>{order.userId?.name}</div>
               </div>
-              <div className='flex gap-3 flex-row'>
-                <Mail className='font-semibold w-4 h-4 ml-2'>
-                    Email:
-                </Mail>
-                <div>
-                    {/* {order.user.email} */}: maheshbadnuni
-                </div>
+              <div className="flex gap-3 items-center">
+                <Mail className="w-4 h-4 ml-4 mr-1" />
+                <div>: {order.userId?.email}</div>
               </div>
-              <div className='flex gap-3 flex-row'>
-                <Phone className='font-semibold  w-4 h-4 ml-2'>
-                    Phone: 7878788822
-                </Phone>
-                <div>
-                    {/* {order.user.phone} */}: 7878788822
-                </div>
+              <div className="flex gap-3 items-center">
+                <Phone className="w-4 h-4 ml-4 mr-1" />
+                <div>: {order.userId?.phone}</div>
               </div>
             </div>
-            
           </div>
-          <hr></hr>
+
+          <hr />
+
           <div className="mb-4 mt-4">
             <div className="flex items-center gap-2 mb-2">
               <MapPin className="w-4 h-4 text-gray-600" />
-              <h4 className="text-sm sm:text-base font-medium text-gray-900">Delivery Address</h4>
+              <h4 className="text-sm sm:text-base font-medium text-gray-900">
+                Delivery Address
+              </h4>
             </div>
             <p className="text-xs sm:text-sm text-gray-600">
-              {order.addressId?.flatHouseBuildingCompanyApartment}, {order.addressId?.areaStreetSectorVillage}, 
-              {order.addressId?.townCity} {order.addressId?.state} {order.addressId?.pincode}
+              {order.addressId?.flatHouseBuildingCompanyApartment}, {order.addressId?.areaStreetSectorVillage}, {order.addressId?.townCity} {order.addressId?.state} {order.addressId?.pincode}
             </p>
             <p className="text-xs sm:text-sm text-gray-600">
               Landmark: {order.addressId?.landmark}
@@ -163,7 +272,9 @@ const OrderCard = ({ order }) => {
           </div>
 
           <div className="border-t border-gray-200 pt-4">
-            <h4 className="text-sm sm:text-base font-medium text-gray-900 mb-3">Order Items</h4>
+            <h4 className="text-sm sm:text-base font-medium text-gray-900 mb-3">
+              Order Items
+            </h4>
             <div className="space-y-2">
               {order.items?.map((item) => (
                 <OrderItem key={item.id} item={item} />
@@ -179,11 +290,11 @@ const OrderCard = ({ order }) => {
 };
 
 const AllOrders = () => {
-  const { orders, loading, error } = useSelector(state => state.order);
-  const { fetchOrders, createBuyNowOrder, createCartOrder, updateOrder } = useOrder();
+  const { orders, loading, error } = useSelector((state) => state.order);
+  const { fetchAllOrders } = useOrder();
 
   useEffect(() => {
-    fetchOrders();
+    fetchAllOrders();
   }, []);
 
   if (loading) {

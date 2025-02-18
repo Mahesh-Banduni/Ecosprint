@@ -66,9 +66,10 @@ const getOrderById = async (req, res, next) => {
 // Update order status
 const updateOrderShippingStatus = async (req, res, next) => {
     try {
-        const order = await orderService.updateOrderShippingStatus(req.params.orderId, req.body);
+        const order = await orderService.updateOrderShippingStatus(req.params.orderId, req.body.orderStatus);
         res.status(200).json(order);
     } catch (error) {
+        console.log(error);
          next(error);
     }
 };

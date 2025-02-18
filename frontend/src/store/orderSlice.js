@@ -25,6 +25,7 @@ const orderSlice = createSlice({
           deliveryByDate: order.deliveryByDate,
           orderCode: order.orderCode,
           addressId: order.addressId,
+          userId: order.userId,
           createdAt: order.createdAt,
           deliveryDate:order.deliveryDate,
           items: order.items.map(item => ({

@@ -211,7 +211,7 @@ router.post("/payment/verify", orderController.verifyPayment);
  *             properties:
  *               orderStatus:
  *                 type: string
- *                 enum: ["Order Confirmed", "Order Packed", " Order Shipped", "Out of Delivery", "Order Delivered", "Order Cancelled", "Replacement Requested", "Replacement Approved","Replacement Order Processing","Replacement Order Packed", "Replacement Order Shipped", "Replacement Order Out of Delivery", "Replacement Order Delivered"]
+ *                 enum: ["Order Processing","Order Confirmed", "Order Packed", " Order Shipped", "Out of Delivery", "Order Completed", "Order Cancelled", "Order Replacement Requested", "Order Replacement Approved","Replacement Order Processing","Replacement Order Packed", "Replacement Order Shipped", "Replacement Order Out of Delivery", "Replacement Order Completed"]
  *                 description: The new status of the order.
  *     responses:
  *       200:
@@ -241,5 +241,35 @@ router.put("/:orderId/update", orderController.updateOrderShippingStatus);
  *         description: Order not found.
  */
 router.delete("/:orderId/delete", orderController.deleteOrder);
+
+/**
+ * @swagger
+ * /orders/:
+ *   get:
+ *     summary: All orders with filter
+ *     tags: [Orders]
+ *     parameters:
+ *       - in: query
+ *         name: category
+ *         schema:
+ *           type: string
+ *           enum: ['Floaters', 'Loafers', 'Oxford', 'Slip-ins', 'Boots', 'Running Shoes', 'Walking Shoes', 'Sandals', 'Flip Flops', 'Sports Shoes', 'Formal Shoes', 'Casual Shoes', 'Ethnic']
+ *       - in: query
+ *         name: duration
+ *         schema:
+ *           type: string
+ *           enum: ['Past 1 week', 'Past 1 month', 'Past 1 quarter', 'Past 1 year', 'All time']
+ *       - in: query
+ *         name: orderStatus
+ *         schema:
+ *           type: string
+ *           enum: ["Order Processing","Order Confirmed", "Order Packed", " Order Shipped", "Out of Delivery", "Order Completed", "Order Cancelled", "Order Replacement Requested", "Order Replacement Approved","Replacement Order Processing","Replacement Order Packed", "Replacement Order Shipped", "Replacement Order Out of Delivery", "Replacement Order Completed"]
+ *     responses:
+ *       200:
+ *         description: List of orders matching the criteria
+ *       404:
+ *         description: No orders found
+ */
+router.get("/", orderController.getAllOrders);
 
 module.exports = router;

@@ -4,7 +4,6 @@ import { useSelector } from "react-redux";
 
 const ProfileSettings = () => {
   const profile = useSelector(state => state.profile);
-  console.log(profile);
   const {status, setStatus, fetchProfile, updateProfile } = useProfile();
   const [formData, setFormData] = useState({ name: "", email: "", phone: "" });
   const [isEditing, setIsEditing] = useState(false);

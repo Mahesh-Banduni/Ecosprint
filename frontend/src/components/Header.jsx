@@ -7,10 +7,13 @@ import { logo } from '../utils/icons';
 import { useDispatch } from 'react-redux';
 import { setFilters } from '../store/productSlice';
 import { toast, ToastContainer } from 'react-toastify';
+import useProfile from '../hooks/useProfile';
 
 const Header = () => {
   const token = localStorage.getItem("token");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const {checkRole} =useProfile();
+  const [role, setRole]=useState(null);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -39,6 +42,14 @@ const Header = () => {
       setActiveCollection(false);
     }
   }, [location]);
+
+  useEffect(() => {
+    const fetchRole = async () => {
+      const userRole = await checkRole();
+      setRole(userRole);
+    };
+    fetchRole();
+  }, []);
 
   const categories = [
     { id: 1, name: "New Arrivals", value: 'isNewArrival'},
@@ -295,43 +306,68 @@ const Header = () => {
 
               {/* Profile Dropdown */}
               {isProfileDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-40 sm:w-48 bg-white rounded-lg shadow-xl border border-gray-100 py-1 z-50">
-                  {!token ? (
-                    <>
-                      <NavLink 
-                        to="/register"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors duration-200"
-                        onClick={() => setIsProfileDropdownOpen(false)}
-                      >
-                        Register
-                      </NavLink>
-                      <NavLink 
-                        to="/login"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors duration-200"
-                        onClick={() => setIsProfileDropdownOpen(false)}
-                      >
-                        Login
-                      </NavLink>
-                    </>
-                  ) : (
-                    <>
-                      <NavLink 
-                        to="/profile"                        
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors duration-200"
-                        onClick={() => setIsProfileDropdownOpen(false)}
-                      >
-                        My Account
-                      </NavLink>
-                      <button
-                        onClick={handleLogout}
-                        className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors duration-200"
-                      >
-                        Logout
-                      </button>
-                    </>
-                  )}
-                </div>
-              )}
+  <div className="absolute right-0 mt-2 w-40 sm:w-48 bg-white rounded-lg shadow-xl border border-gray-100 py-1 z-50">
+    {!token ? (
+      <>
+        <NavLink 
+          to="/register"
+          className="block px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors duration-200"
+          onClick={() => setIsProfileDropdownOpen(false)}
+        >
+          Register
+        </NavLink>
+        <NavLink 
+          to="/login"
+          className="block px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors duration-200"
+          onClick={() => setIsProfileDropdownOpen(false)}
+        >
+          Login
+        </NavLink>
+      </>
+    ) : role==='Admin' ? (
+      <>
+        <NavLink 
+          to="/profile"
+          className="block px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors duration-200"
+          onClick={() => setIsProfileDropdownOpen(false)}
+        >
+          My Account
+        </NavLink>
+        <NavLink 
+          to="/admin-dashboard"
+          className="block px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors duration-200"
+          onClick={() => setIsProfileDropdownOpen(false)}
+        >
+          Admin Dashboard
+        </NavLink>
+        <button
+          onClick={handleLogout}
+          className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors duration-200"
+        >
+          Logout
+        </button>
+      </>
+    ) : (
+      <>
+        <NavLink 
+          to="/profile"
+          className="block px-4 py-2 text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors duration-200"
+          onClick={() => setIsProfileDropdownOpen(false)}
+        >
+          My Account
+        </NavLink>
+        
+        <button
+          onClick={handleLogout}
+          className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition-colors duration-200"
+        >
+          Logout
+        </button>
+      </>
+    )}
+  </div>
+)}
+
             </div>
           </div>
         </div>

@@ -17,7 +17,7 @@ const errorHandler = (error, req, res, next) => {
             error: error.message || 'Too many requests, please try again later.',
         });
     }
-    console.log(error);
+    //console.log(error);
     return res.status(500).json({ error: 'Internal Server Error' });
 };
 

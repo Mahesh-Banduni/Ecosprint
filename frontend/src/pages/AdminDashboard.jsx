@@ -81,7 +81,6 @@ const AdminDashboard =() => {
     switch (activeTab) {
       case "All Products":
         return <AllProducts />;
-
       case "All Orders":
         return <AllOrders />;
       default:
