@@ -37,7 +37,6 @@ const createProduct = async (userId, productData, files) => {
     product.gender=productData.gender;
     product.category=productData.category;
     product.material=productData.material;
-    product.brand=productData.brand;
     product.color=productData.color;
     product.materialWeight=productData.materialWeight;
     product.stock=productData.stock;
@@ -100,9 +99,9 @@ const searchProduct = async (filters, sortBy, sortOrder, searchQuery) => {
 
     // Advanced price filter (minPrice, maxPrice, or exactPrice)
     if (filters.minPrice || filters.maxPrice) {
-        query.price = {};
-        if (filters.minPrice) query.price.$gte = filters.minPrice;
-        if (filters.maxPrice) query.price.$lte = filters.maxPrice;
+        query.salePrice = {};
+        if (filters.minPrice) query.salePrice.$gte = filters.minPrice;
+        if (filters.maxPrice) query.salePrice.$lte = filters.maxPrice;
     }
 
     // Rating filter
@@ -129,7 +128,7 @@ const searchProduct = async (filters, sortBy, sortOrder, searchQuery) => {
         .exec();
 
     if (!filteredProducts || filteredProducts.length === 0) {
-        throw new Error("No product found matching the criteria.");
+        throw new NotFoundError("No product found matching the criteria.");
     }
 
     // If a search query is provided, use js-search for in-memory searching
@@ -152,7 +151,6 @@ const searchProduct = async (filters, sortBy, sortOrder, searchQuery) => {
         searchEngine.addIndex("category"); // Medium priority
         searchEngine.addIndex("description"); // Medium priority
         searchEngine.addIndex("gender"); // Medium priority
-        searchEngine.addIndex("brand"); // Medium priority
         searchEngine.addIndex("occasion"); // Medium priority
         searchEngine.addIndex("season"); // Medium priority
         searchEngine.addIndex("material"); // Medium priority
@@ -213,9 +211,6 @@ const updateProduct = async (userId, productId, productData, files) => {
     }
     if(productData.gender){
         product.gender=productData.gender;
-    }
-    if(productData.brand){
-        product.brand=productData.brand;
     }
     if(productData.color){
         product.color=productData.color;

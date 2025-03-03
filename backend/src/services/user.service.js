@@ -144,7 +144,7 @@ const resetPassword = async (userId, newPassword, confirmNewPassword) => {
 
 const orders = async (userId) => {
     const user = await User.findById(userId)
-    .populate("order")
+    .populate("order").populate("userId")
     .exec();
 
     if(user.orders.length=='0'){

@@ -34,8 +34,6 @@ const router = express.Router();
  *               category:
  *                 type: string
  *                 enum: ['Sneakers', 'Loafers', 'Oxford', 'Slip-ons', 'Slip-ins', 'Running Shoes', 'Walking Shoes', 'Boots', 'Sandals', 'Floaters', 'Flip Flops', 'Sports Shoes', 'Formal Shoes', 'Casual Shoes', 'Ethnic']
- *               brand:
- *                 type: string
  *               price:
  *                 type: number
  *               salePrice:
@@ -136,8 +134,6 @@ router.get("/:id", productController.getProductById);
  *               category:
  *                 type: string
  *                 enum: ['Sneakers', 'Loafers', 'Oxford', 'Slip-ons', 'Slip-ins', 'Running Shoes', 'Walking Shoes', 'Boots', 'Sandals', 'Floaters', 'Flip Flops', 'Sports Shoes', 'Formal Shoes', 'Casual Shoes', 'Ethnic']
- *               brand:
- *                 type: string
  *               price:
  *                 type: number
  *               salePrice:

@@ -2,7 +2,7 @@ import { lazy, StrictMode, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Provider } from "react-redux";
-import {store} from "./store/Store";
+import store from "./store/Store";
 import App from "./App";
 import "./index.css";
 
@@ -17,13 +17,14 @@ const Loader = () => (
 const Home = lazy(() => import("./pages/Home"));
 const Products = lazy(() => import("./pages/Products"));
 const ProductDetails = lazy(() => import("./pages/ProductDetailPage"));
-// const Cart = lazy(() => import("./pages/Cart"));
-// const Wishlist = lazy(() => import("./pages/Wishlist"));
-// const Profile = lazy(() => import("./pages/Profile"));
-// const SignIn = lazy(() => import("./pages/SignIn"));
-// const SignUp = lazy(() => import("./pages/SignUp"));
-// const Contact = lazy(() => import("./pages/Contact"));
-// const About = lazy(() => import("./pages/About"));
+const Cart = lazy(() => import("./pages/Cart"));
+const Checkout = lazy(() => import("./pages/Checkout"));
+const AdminDashboard= lazy(() => import('./pages/AdminDashboard'));
+const Profile = lazy(() => import("./pages/Profile"));
+const Login = lazy(() => import("./pages/Login"));
+const Register = lazy(() => import("./pages/Register"));
+const ContactUs = lazy(() => import("./pages/ContactUs"));
+const AboutUs = lazy(() => import("./pages/AboutUs"));
 
 // Router configuration
 const routes = createBrowserRouter([
@@ -55,62 +56,70 @@ const routes = createBrowserRouter([
           </Suspense>
         ),
       },
-      // {
-      //   path: "/cart",
-      //   element: (
-      //     <Suspense fallback={<Loader />}>
-      //       <Cart />
-      //     </Suspense>
-      //   ),
-      // },
-      // {
-      //   path: "/wishlist",
-      //   element: (
-      //     <Suspense fallback={<Loader />}>
-      //       <Wishlist />
-      //     </Suspense>
-      //   ),
-      // },
-      // {
-      //   path: "/profile",
-      //   element: (
-      //     <Suspense fallback={<Loader />}>
-      //       <Profile />
-      //     </Suspense>
-      //   ),
-      // },
-      // {
-      //   path: "/signin",
-      //   element: (
-      //     <Suspense fallback={<Loader />}>
-      //       <SignIn />
-      //     </Suspense>
-      //   ),
-      // },
-      // {
-      //   path: "/signup",
-      //   element: (
-      //     <Suspense fallback={<Loader />}>
-      //       <SignUp />
-      //     </Suspense>
-      //   ),
-      // },
-      // {
-      //   path: "/contact",
-      //   element: (
-      //     <Suspense fallback={<Loader />}>
-      //       <Contact />
-      //     </Suspense>
-      //   ),
-      // },
-      // {
-      //   path: "/about",
-      //   element: (
-      //     <Suspense fallback={<Loader />}>
-      //       <About />
-      //     </Suspense>
-      //   ),
-      // },
+      {
+        path: "/cart",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <Cart />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/checkout",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <Checkout />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/profile",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <Profile />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/login",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <Login />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/register",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <Register />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/contact",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <ContactUs />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/admin-dashboard",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <AdminDashboard />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/about",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <AboutUs />
+          </Suspense>
+        ),
+      },
     ],
   },
 ]);

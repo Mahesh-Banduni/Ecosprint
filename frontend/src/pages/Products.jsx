@@ -14,7 +14,7 @@ const Products = () => {
   const dispatch = useDispatch();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { products, loading, error } = useSelector(state => state.products);
-  const { fetchProducts, localFilters, setLocalFilters } = useProducts();
+  const { fetchProducts, localFilters, setLocalFilters, handleSortChange } = useProducts();
   
   useEffect(() => {
     // Check if we have initial filters from navigation
@@ -35,7 +35,7 @@ const Products = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <ProductHeader />
+      <ProductHeader handleSortChange={handleSortChange} products={products}  setFilters={setFilters} />
       <div className="flex">
         <button
           className="fixed bottom-4 right-4 md:hidden z-50 bg-emerald-600 text-white p-4 rounded-full shadow-lg"
@@ -57,11 +57,14 @@ const Products = () => {
           ) : products?.length === 0 ? (
             <div className="text-center text-gray-600">No products found</div>
           ) : (
-            <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <>
+            
+            <div className="grid grid-cols-1 size-m sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {products?.map(product => (
                 <ProductCard key={product._id} product={product} />
               ))}
             </div>
+            </>
           )}
         </main>
       </div>

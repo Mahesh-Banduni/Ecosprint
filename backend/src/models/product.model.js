@@ -18,15 +18,11 @@ const productSchema = new mongoose.Schema({
   category: {
     type: String,
     required: true,
-    enum: ['Sneakers', 'Loafers', 'Oxford', 'Slip-ons', 'Slip-ins', 'Running Shoes', 'Walking Shoes', 'Boots', 'Sandals', 'Floaters', 'Flip Flops', 'Sports Shoes', 'Formal Shoes', 'Casual Shoes', 'Ethnic']
+    enum: ['Floaters', 'Loafers', 'Oxford', 'Slip-ins', 'Boots', 'Running Shoes', 'Walking Shoes', 'Sandals', 'Flip Flops', 'Sports Shoes', 'Formal Shoes', 'Casual Shoes', 'Ethnic']
   },
   gender: {
     type: String,
     enum: ['Men', 'Women', 'Kids', 'Unisex'],
-    required: true
-  },
-  brand: {
-    type: String,
     required: true
   },
   price: {

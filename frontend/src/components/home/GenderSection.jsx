@@ -32,7 +32,11 @@ const GenderSection = () => {
           occasion: [],
           season: [],
           searchQuery: '',
-          priceRange: [0, 10000]
+          priceRange: [0, 10000],
+          isBestSeller: '',
+          isOnSale: '',
+          specialCollection: '',
+          isNewArrival: '',
         }
       }
     });
@@ -72,16 +76,19 @@ const GenderSection = () => {
               slidesPerView: 2.5,
             },
             820: {
-              slidesPerView: 2,
+              slidesPerView: 2.2,
             },
             600: {
-              slidesPerView: 2,
+              slidesPerView: 1.8,
             },
             470: {
               slidesPerView: 1.5,
             },
             370: {
-              slidesPerView: 1,
+              slidesPerView: 1.2,
+            },
+            280: {
+              slidesPerView: 1.2,
             },
           }}
         >
@@ -93,7 +100,7 @@ const GenderSection = () => {
                 src={category.image}
                 alt={category.name}
                 />
-                <div className="mt-2 mb-3 text-lg sm:text-xl md:text-xl lg:text-1xl xl:text-1xl text-center">{category.name}</div>
+                <div className="mt-2 mb-3 lg:text-xl md:text-xl text-center sm:text-sm">{category.name}</div>
               </div>
             </SwiperSlide>
             

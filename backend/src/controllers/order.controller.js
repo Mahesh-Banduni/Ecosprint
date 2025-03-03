@@ -4,8 +4,8 @@ const logger = require("../configs/winston.config.js");
 // Create an order after buy now
 const createBuyNowOrder = async (req, res, next) => {
     try{
-        const {message, order}= await orderService.createBuyNowOrder(req.body.userId, req.body.addressId, req.body);
-        res.status(201).json({ message, order });
+        const {message, order, razorpayOrder}= await orderService.createBuyNowOrder(req.user.id, req.body.addressId, req.body);
+        res.status(201).json({ message, order, razorpayOrder });
     } catch (error) {
         next(error);
     }
@@ -13,7 +13,7 @@ const createBuyNowOrder = async (req, res, next) => {
 // Create an order from the cart
 const createCartOrder = async (req, res, next) => {
     try{
-        const {message, order}= await orderService.createCartOrder(req.body.userId, req.body.addressId);
+        const {message, order}= await orderService.createCartOrder(req.user.id, req.body.addressId);
         res.status(201).json({ message, order });
     } catch (error) {
         next(error);
@@ -43,8 +43,11 @@ const verifyPayment = async (req, res, next) => {
 // Get all orders for a user
 const getOrdersByUserId = async (req, res, next) => {
     try {
-        const orders = await orderService.getOrdersByUserId(req.params.userId);
-        res.status(200).json(orders);
+        const orders = await orderService.getOrdersByUserId(req.user.id);
+        res.status(200).json({
+            success: true,
+            data: orders,
+          });
     } catch (error) {
          next(error);
     }
@@ -63,9 +66,10 @@ const getOrderById = async (req, res, next) => {
 // Update order status
 const updateOrderShippingStatus = async (req, res, next) => {
     try {
-        const order = await orderService.updateOrderShippingStatus(req.params.orderId, req.body);
+        const order = await orderService.updateOrderShippingStatus(req.params.orderId, req.body.orderStatus);
         res.status(200).json(order);
     } catch (error) {
+        console.log(error);
          next(error);
     }
 };
@@ -80,4 +84,25 @@ const deleteOrder = async (req, res, next) => {
     }
 };
 
-module.exports={createBuyNowOrder, createCartOrder, initiatePayment, verifyPayment, getOrderById, getOrdersByUserId, updateOrderShippingStatus, deleteOrder};
+//Get All orders
+const getAllOrders = async(req, res, next) =>{
+    try{
+            const filters = {
+                category: req.query.category,
+                duration: req.query.duration,
+                orderStatus: req.query.orderStatus,
+              };
+          
+            const orders= await orderService.getAllOrders(filters);
+            res.status(200).json({
+                success: true,
+                data: orders,
+              });
+        }
+        catch(error){
+          //console.log(error);
+          next(error);
+        }
+}
+
+module.exports={createBuyNowOrder, createCartOrder, initiatePayment, verifyPayment, getOrderById, getOrdersByUserId, updateOrderShippingStatus, deleteOrder, getAllOrders};

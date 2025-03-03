@@ -13,7 +13,7 @@ const getCartByUserId = async (userId) => {
 };
 
 // Add item to cart
-const addItemToCart = async (userId, { productId, quantity }) => {
+const addItemToCart = async (userId, { productId, quantity, size }) => {
     if (!productId || !quantity || quantity <= 0) {
         throw new BadRequestError("Invalid item data");
     }
@@ -24,28 +24,31 @@ const addItemToCart = async (userId, { productId, quantity }) => {
         throw new NotFoundError("Product not found");
     }
     let amount=product.salePrice*quantity;
+    size = product.sizeType+"-"+size;
     if (!cart) {
-        cart = new Cart({ userId, items: [{ productId, quantity, amount }] });
+        cart = new Cart({ userId, items: [{ productId, quantity, amount, size }] });
         user.cart=cart._id;
         await user.save();
     } else {
         const itemIndex = cart.items.findIndex(
-            (item) => item.productId.toString() === productId
+            (item) => item.productId.toString() === productId && item.size.toString()===size
         );
 
         if (itemIndex > -1) {
             cart.items[itemIndex].quantity += quantity;
             cart.items[itemIndex].amount += product.salePrice*quantity;
+            cart.items[itemIndex].size=size;
         } else {
-            cart.items.push({ productId, quantity, amount });
+            cart.items.push({ productId, quantity, amount, size });
         }
     }
     await cart.save();
-    return cart;
+    const cart1 = await Cart.findOne({ userId }).populate("items.productId");
+    return cart1;
 };
 
 // Update item quantity in cart
-const updateCartItem = async (userId, { productId, quantity }) => {
+const updateCartItem = async (userId, { productId, quantity, size }) => {
     if (!productId || quantity === undefined || quantity < 0) {
         throw new BadRequestError("Invalid item data");
     }
@@ -61,21 +64,22 @@ const updateCartItem = async (userId, { productId, quantity }) => {
     }
 
     const itemIndex = cart.items.findIndex(
-        (item) => item.productId.toString() === productId
+        (item) => item.productId.toString() === productId && item.size.toString()===size
     );
     if (itemIndex > -1) {
         if (quantity === 0) {
             cart.items.splice(itemIndex, 1); // Remove item if quantity is 0
         } else {
-            cart.items[itemIndex].quantity += quantity;
-            cart.items[itemIndex].amount += product.salePrice*quantity;
+            cart.items[itemIndex].quantity = quantity;
+            cart.items[itemIndex].amount = product.salePrice*quantity;
         }
     } else {
         throw new BadRequestError("Item not found in cart");
     }
 
     await cart.save();
-    return cart;
+    const cart1 = await Cart.findOne({ userId }).populate("items.productId");
+    return cart1;
 };
 
 // Remove item from cart
@@ -99,7 +103,8 @@ const removeCartItem = async (userId, productId) => {
     }
 
     await cart.save();
-    return cart;
+    const cart1 = await Cart.findOne({ userId }).populate("items.productId");
+    return cart1;
 };
 
 // Clear cart

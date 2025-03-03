@@ -3,7 +3,7 @@ const { ConflictError, NotFoundError, BadRequestError } = require('../errors/err
 
 const errorHandler = (error, req, res, next) => {
     if (error instanceof ConflictError || error instanceof BadRequestError || error instanceof NotFoundError) {
-        console.log(error);
+        //console.log(error);
         return res.status(error.statusCode).json({ error: error.message });
     }
 
@@ -17,7 +17,7 @@ const errorHandler = (error, req, res, next) => {
             error: error.message || 'Too many requests, please try again later.',
         });
     }
-    console.log(error);
+    //console.log(error);
     return res.status(500).json({ error: 'Internal Server Error' });
 };
 

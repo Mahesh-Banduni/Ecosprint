@@ -3,11 +3,9 @@ const mongoose = require("mongoose");
 const addressSchema = new mongoose.Schema({
     pincode: { type: Number},
     flatHouseBuildingCompanyApartment: {type: String},
-    areaStreetSector: {type: String},
-    locality: {type: String},
+    areaStreetSectorVillage: {type: String},
     landmark: {type: String},
-    district: {type: String},
-    citytownvillage: {type: String},
+    townCity: {type: String},
     state: {type: String},
     userId: {
         type: mongoose.Schema.Types.ObjectId,

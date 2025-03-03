@@ -1,4 +1,4 @@
-import { setProducts, setError, setLoading } from '../store/productSlice';
+import { setProducts, setError, setLoading, setSelectedProduct } from '../store/productSlice';
 import axiosInstance from "../utils/axiosInstance";
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -19,7 +19,14 @@ const useProducts = () => {
     occasion: [],
     season: [],
     searchQuery: '',
-    priceRange: [0, 10000]
+    priceRange: [0, 10000],
+    availability: '',
+    sortBy: '',
+    sortOrder: '',
+    isNewArrival: '',
+    isBestSeller: '',
+    isOnSale: '',
+    specialCollection: ''
   };
 
   const [localFilters, setLocalFilters] = useState(defaultFilters);
@@ -34,19 +41,26 @@ const useProducts = () => {
     occasion: true,
     season: true,
     price: true,
+    availability: true,
+    sortBy: true,
+    sortOrder: true,
     searchQuery: true,
+    isNewArrival: true,
+    isBestSeller: true,
+    isOnSale: true,
+    specialCollection: true
   });
 
   // Filter categories (same as before)
   const filterCategories = {
-    category: ['Sneakers', 'Loafers', 'Oxford', 'Slip-ons', 'Boots', 'Sandals'],
+    category: [ 'Loafers', 'Oxford', 'Slip-ins', 'Boots', 'Running Shoes', 'Walking Shoes', 'Sandals', 'Floaters', 'Flip Flops', 'Sports Shoes', 'Formal Shoes', 'Casual Shoes', 'Ethnic'],
     gender: ['Men', 'Women', 'Kids', 'Unisex'],
     brand: ['Nike', 'Adidas', 'Puma', 'Reebok', 'Vans'],
-    material: ['Leather', 'Canvas', 'Mesh', 'Suede', 'Synthetic'],
+    material: ['Leather', 'Canvas', 'Mesh', 'Suede', 'Synthetic', 'Rubber', 'Fabric', 'Cotton', 'Nylon'],
     color: ['Black', 'Brown', 'White', 'Blue', 'Red', 'Green'],
-    occasion: ['Casual', 'Formal', 'Sports', 'Party', 'Beach'],
+    occasion: ['Casual', 'Formal', 'Sports', 'Party', 'Beach', 'Wedding', 'Work', 'Outdoor'],
     season: ['Summer', 'Winter', 'Monsoon', 'All Season'],
-    availability: ['exclude out of stock']
+    availability: ['exclude out of stock'],
   };
 
   // Toggle section expand
@@ -73,18 +87,157 @@ const useProducts = () => {
   };
 
   // Handle price range change
+  // const handlePriceChange = (value) => {
+  //   const updatedFilters = {
+  //     ...currentFilters,
+  //     priceRange: value
+  //   };
+
+  //   dispatch(setFilters(updatedFilters)); // Dispatch updated filters to Redux
+  //   fetchProducts(updatedFilters); // Fetch products with updated sorting
+  // };
+
   const handlePriceChange = (value) => {
-    setLocalFilters(prev => ({
-      ...prev,
+    const updatedFilters = {
+      ...currentFilters,
       priceRange: value
-    }));
+    };
+    setLocalFilters(updatedFilters);
+    dispatch(setFilters(updatedFilters));
+    fetchProducts(updatedFilters);
   };
+
+  // Handle sorting change
+const handleSortChange = (sortBy, sortOrder) => {
+  const updatedFilters = {
+    ...currentFilters,
+    sortBy,
+    sortOrder,
+  };
+
+  setLocalFilters(updatedFilters); // Update local state
+  dispatch(setFilters(updatedFilters)); // Dispatch updated filters to Redux
+  fetchProducts(updatedFilters); // Fetch products with updated sorting
+};
+
+const handleCheckChange = (category, value) => {
+  const currentFilterList = currentFilters[category] || [];
+  const newFilterList = currentFilterList.includes(value)
+    ? currentFilterList.filter(item => item !== value)
+    : [...currentFilterList, value];
+
+  const updatedFilters = {
+    ...currentFilters,
+    [category]: newFilterList
+  };
+
+  setLocalFilters(updatedFilters);
+  dispatch(setFilters(updatedFilters)); // Dispatch updated filters to Redux
+  fetchProducts(updatedFilters); // Fetch products with updated sorting
+};
+
 
   // Apply filters
   const applyFilters = () => {
     dispatch(setFilters(localFilters));
     fetchProducts(localFilters);
     onClose();
+  };
+
+
+  const createProduct = async (productData, files) => {
+    dispatch(setLoading(true));
+    try {
+      const formData = new FormData();
+      
+      // Append product data
+      Object.keys(productData).forEach(key => {
+        formData.append(key, productData[key]);
+      });
+      
+      // Append files
+      if (files) {
+        files.forEach(file => {
+          formData.append('images', file);
+        });
+      }
+
+      const response = await axiosInstance.post('/product/add', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
+      return response.data;
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 'Failed to create product';
+      dispatch(setError(errorMessage));
+      throw error;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+  const getProductById = async (productId) => {
+    dispatch(setLoading(true));
+    try {
+      const response = await axiosInstance.get(`/product/${productId}`);
+      dispatch(setSelectedProduct(response.data));
+      return response.data;
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 'Failed to fetch product';
+      dispatch(setError(errorMessage));
+      throw error;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+  const updateProduct = async (productId, productData, files) => {
+    dispatch(setLoading(true));
+    try {
+      const formData = new FormData();
+      
+      // Append product data
+      Object.keys(productData).forEach(key => {
+        formData.append(key, productData[key]);
+      });
+      
+      // Append files
+      if (files) {
+        files.forEach(file => {
+          formData.append('images', file);
+        });
+      }
+
+      const response = await axiosInstance.put(`/product/${productId}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+
+      return response.data;
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 'Failed to update product';
+      dispatch(setError(errorMessage));
+      throw error;
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+  const deleteProduct = async (productId) => {
+    dispatch(setLoading(true));
+    try {
+      const response = await axiosInstance.delete(`/product/${productId}`);
+      return response.data;
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 'Failed to delete product';
+      dispatch(setError(errorMessage));
+      throw error;
+    } finally {
+      dispatch(setLoading(false));
+    }
   };
 
   // Reset all filters
@@ -98,10 +251,17 @@ const useProducts = () => {
       occasion: [],
       season: [],
       priceRange: [0, 10000],
-      searchQuery: ''
+      sortBy: '',
+      sortOrder: '',
+      searchQuery: '',
+      availability: '',
+      isNewArrival: '',
+      isBestSeller: '',
+      isOnSale: '',
+      specialCollection: ''
     };
 
-    setLocalFilters(resetState);
+    //setLocalFilters(resetState);
     dispatch(setFilters(resetState));
     fetchProducts(resetState);
     onClose();
@@ -122,7 +282,14 @@ const useProducts = () => {
         season: filters?.season?.length > 0 ? filters.season : undefined,
         searchQuery: filters?.searchQuery || '',
         minPrice: filters?.priceRange?.[0] || 0,
-        maxPrice: filters?.priceRange?.[1] || 10000
+        maxPrice: filters?.priceRange?.[1] || 10000,
+        availability: filters?.availability || '',
+        sortBy: filters?.sortBy || '',
+        sortOrder: filters?.sortOrder || '',
+        isBestSeller: filters.isBestSeller? filters.isBestSeller : '',
+        isNewArrival: filters.isNewArrival? filters.isNewArrival : '',
+        specialCollection: filters.specialCollection? filters.specialCollection : '',
+        isOnSale: filters.isOnSale? filters.isOnSale : '',
       };
 
       // Remove undefined values
@@ -182,8 +349,26 @@ const useProducts = () => {
     };
   };
 
-  return { fetchProducts, debouncedFetchProducts: debouncedFetchProducts(fetchProducts), currentFilters, localFilters,  setLocalFilters, expandedSections, filterCategories, toggleSection, handleFilterChange, handlePriceChange, applyFilters, resetFilters};
+  return { 
+    fetchProducts, 
+    debouncedFetchProducts: debouncedFetchProducts(fetchProducts),
+    defaultFilters, 
+    handleSortChange,
+    handleCheckChange, 
+    currentFilters, 
+    localFilters,  
+    setLocalFilters, 
+    expandedSections, 
+    filterCategories, 
+    toggleSection, 
+    handleFilterChange, 
+    handlePriceChange, 
+    applyFilters, 
+    resetFilters, 
+    createProduct,
+    getProductById,
+    updateProduct,
+    deleteProduct};
 };
 
 export default useProducts;
-

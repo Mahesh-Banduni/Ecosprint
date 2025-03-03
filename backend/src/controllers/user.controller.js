@@ -13,7 +13,6 @@ const createUser = async (req, res, next) => {
       data: { response },
     });
   } catch (error) {
-    console.log(error);
     next(error);
   }
 };
@@ -34,7 +33,7 @@ const getAllUsers = async (req, res, next) => {
 // Get user by ID
 const getUserById = async (req, res, next) => {
   try {
-    const user = await userService.getUserById(req.params.id);
+    const user = await userService.getUserById(req.user.id);
     res.status(200).json({
       success: true,
       data: user,
@@ -47,7 +46,7 @@ const getUserById = async (req, res, next) => {
 // Update user by ID
 const updateUser = async (req, res, next) => {
   try {
-    const updatedUser = await userService.updateUser(req.params.id, req.body, req.files);
+    const updatedUser = await userService.updateUser(req.user.id, req.body, req.files);
     logger.info(
       "User id:" + `${updatedUser._id}` + " has updated his data successfully"
     );
@@ -64,7 +63,7 @@ const updateUser = async (req, res, next) => {
 // Delete user by ID
 const deleteUser = async (req, res, next) => {
   try {
-    await userService.deleteUser(req.params.id);
+    await userService.deleteUser(req.user.id);
     logger.info(
       "User id:" + `${req.user.id}` + " has been deleted successfully"
     );
@@ -166,7 +165,7 @@ const addWishlistProduct = async (req, res, next) => {
 
   const getUserAddresses = async (req, res, next) => {
     try {
-      const addresses = await userService.getUserAddresses(req.params.id);
+      const addresses = await userService.getUserAddresses(req.user.id);
       res.status(200).json({
         success: true,
         data: addresses,

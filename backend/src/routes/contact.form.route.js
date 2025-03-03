@@ -21,6 +21,8 @@ const { contactLimiter } = require("../middlewares/rate.limitter.js");
  *             required:
  *               - fullName
  *               - phone
+ *               - email
+ *               - subject
  *               - message
  *             properties:
  *               fullName:
@@ -32,6 +34,9 @@ const { contactLimiter } = require("../middlewares/rate.limitter.js");
  *               email:
  *                 type: string
  *                 description: Email address (optional)
+ *               subject:
+ *                 type: string
+ *                 description: subject of the message
  *               message:
  *                 type: string
  *                 description: The message sent via the contact form

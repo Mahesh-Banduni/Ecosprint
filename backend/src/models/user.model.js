@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
   }],
   isVerified: { type: Boolean, default: false},
   role: {type: String, enum: ["User","Admin"], default: 'User'},
-  phone: { type: String, minlength: 10, maxlength: 10},
+  phone: { type: String},
   email: {
     type: String,
     required: true,

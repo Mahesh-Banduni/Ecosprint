@@ -93,57 +93,89 @@ const createCartOrder = async (userId, addressId) => {
     return { message: "Order placed successfully", order };
 };
 
-// Create an order
 const createBuyNowOrder = async (userId, addressId, itemData) => {
-    var orderCodeString='ODR';
-    let orderCode;
-    let orderCodeCheck=[];
+    const orderCodePrefix = "ODR";
+    let orderCode, orderCodeCheck;
+
+    // Generate a unique order code
     do {
-        let orderCode1 = await generateOrderCode();
-        orderCode= orderCodeString+orderCode1;
-        // Check if the generated order code already exists
-        orderCodeCheck = await Order.find({ orderCode });
-    } while (orderCodeCheck.length > 0); // Repeat if the order code already exists
+        const generatedCode = await generateOrderCode();
+        orderCode = orderCodePrefix + generatedCode;
+        orderCodeCheck = await Order.exists({ orderCode });
+    } while (orderCodeCheck);
 
-    const product = await Product.findById(itemData.productId);
-    const items=[];
-    const productId=itemData.productId;
-    const quantity=itemData.quantity;
-    const amount=product.price * quantity;
-    items.push({
-        productId,
-        quantity,
-        amount
-    });
-    
-    const totalAmount = amount + 79;
+    // Normalize `items` to always be an array
+    const items = Array.isArray(itemData.items) ? itemData.items : [{ 
+        productId: itemData.productId, 
+        quantity: itemData.quantity, 
+        size: itemData.size 
+    }];
 
+    const processedItems = [];
+    let totalAmount = 79; // Base shipping cost
+
+    for (const item of items) {
+        const product = await Product.findById(item.productId);
+        if (!product) {
+            throw new NotFoundError(`Product not found for ID ${item.productId}`);
+        }
+
+        const amount = product.salePrice * item.quantity;
+        const size = `${item.size}`;
+
+        processedItems.push({
+            productId: item.productId,
+            quantity: item.quantity,
+            amount,
+            size,
+        });
+
+        totalAmount += amount;
+    }
+
+    // Create the order
     const order = new Order({
         userId,
         orderCode,
-        items,
+        items: processedItems,
         totalAmount,
-        addressId
+        addressId,
+        deliveryDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
     });
-    const currentDate = new Date();
-    order.deliveryDate= new Date(currentDate.getTime() + 7 * 24 * 60 * 60 * 1000);
 
     await order.save();
-    const user = await User.findById(userId);
-    user.orders.push(order._id);
-    await user.save();
 
-    // Deduct stock and clear cart
-    for (const item of order.items) {
-        const product = await Product.findById(item.productId._id);
-        if (!product) throw new NotFoundError(`Product not found for ID ${item.productId._id}`);
-        product.stock -= item.quantity;
-        product.orders.push(order._id);
-        await product.save();
-    }
+    // Update user's order history
+    await User.findByIdAndUpdate(userId, { $push: { orders: order._id } });
 
-    return { message: "Order placed successfully", order };
+    // Deduct stock for all items
+    await Promise.all(processedItems.map(async (item) => {
+        await Product.findByIdAndUpdate(item.productId, {
+            $inc: { stock: -item.quantity },
+            $push: { orders: order._id },
+        });
+    }));
+    const cart = await Cart.findOne({ userId });
+    cart.items = [];
+    await cart.save();
+    // Initiate Razorpay payment
+    const razorpayOrder = await razorpay.orders.create({
+        amount: totalAmount * 100, // Convert to paise
+        currency: "INR",
+        receipt: `ORDER_${order.orderCode}`,
+    });
+
+    // Attach Razorpay order ID to order
+    order.paymentId = razorpayOrder.id;
+    await order.save();
+
+    return { 
+        message: "Order placed successfully", 
+        order, 
+        razorpayOrder 
+    };
 };
+
 
 // Initiate Razorpay payment
 const initiatePayment = async (orderId) => {
@@ -185,7 +217,7 @@ const verifyPayment = async (razorpay_order_id, razorpay_payment_id, razorpay_si
     }
     order.paymentStatus = "Paid";
     order.orderStatus="Order Confirmed";
-    order.deliveryDate= new Date(currentDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+    order.deliveryDate= new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
     await order.save();
 
     return { message: "Payment successful", order };
@@ -193,7 +225,7 @@ const verifyPayment = async (razorpay_order_id, razorpay_payment_id, razorpay_si
 
 // Get all orders for a user
 const getOrdersByUserId = async (userId) => {
-    const orders = await Order.find({ userId }).populate("items.productId");
+    const orders = await Order.find({ userId }).populate("items.productId").populate("addressId").populate("userId","name phone email");
     if (!orders) throw new NotFoundError("Orders not found");
     return orders;
 };
@@ -207,7 +239,7 @@ const getOrderById = async (orderId) => {
 
 // Update order status
 const updateOrderShippingStatus = async (orderId, status) => {
-    const order = await Order.findById(orderId).populate("items.productId");
+    const order = await Order.findById(orderId);
     if (!order) throw new NotFoundError("Order not found");
     if (!status) throw new BadRequestError("Order status is required");
 
@@ -222,9 +254,9 @@ const updateOrderShippingStatus = async (orderId, status) => {
             }
         }
     }
-    const updatedOrder = await Order.findByIdAndUpdate(orderId, { status }, { new: true });
-    if (!updatedOrder) throw new NotFoundError("Order not found");
-    return updatedOrder;
+    order.orderStatus=status;
+    await order.save();
+    return order;
 };
 
 
@@ -248,41 +280,57 @@ const deleteOrder = async (orderId) => {
     return { message: "Order deleted successfully", order };
 };
 
-const getAllOrders = async (filters, sortBy, sortOrder) => {
+const getAllOrders = async (filters) => {
     const query = {};
 
     // Apply filters
     if (filters.category) query.category = filters.category;
-    if (filters.brand) query.brand = filters.brand;
-    
-    if (filters.brand) query.brand = filters.brand;
-    if (filters.brand) query.brand = filters.brand;
-    if (filters.availability === "exclude out of stock") {
-        query.stockStatus = "in-stock";
-    }
+    if (filters.orderStatus) query.orderStatus= filters.orderStatus;
 
     // Advanced price filter (minPrice, maxPrice)
-    if (filters.minPrice || filters.maxPrice) {
-        query.totalAmount = {};
-        if (filters.minPrice) query.totalAmount.$gte = filters.minPrice;
-        if (filters.maxPrice) query.totalAmount.$lte = filters.maxPrice;
+    if (filters.duration) {
+        let startDate = null;
+        let endDate = new Date(); // Default end date is today
+        const today = new Date();
+    
+        // Past durations
+        if (filters.duration === "Past 1 Week") {
+            startDate = new Date();
+            startDate.setDate(today.getDate() - 7);
+        } else if (filters.duration === "Past 1 Month") {
+            startDate = new Date();
+            startDate.setMonth(today.getMonth() - 1);
+        } else if (filters.duration === "Past 1 Quarter") {
+            const currentQuarter = Math.floor(today.getMonth() / 3); // Get current quarter (0-3)
+            const lastQuarterEndMonth = currentQuarter * 3 - 1; // Last quarter's last month
+            const lastQuarterStartMonth = lastQuarterEndMonth - 2; // Last quarter's first month
+    
+            startDate = new Date(today.getFullYear(), lastQuarterStartMonth, 1);
+            endDate = new Date(today.getFullYear(), lastQuarterEndMonth + 1, 0); // Last day of last quarter
+        } else if (filters.duration === "Past 1 Last Year") {
+            startDate = new Date(today.getFullYear() - 1, 0, 1); // January 1st of last year
+            endDate = new Date(today.getFullYear() - 1, 11, 31); // December 31st of last year
+        }
+    
+        // Apply date filter to the query
+        if (startDate) {
+            query.createdAt = { $gte: startDate };
+            if (filters.duration.includes("Past 1 Last Quarter") || filters.duration.includes("Past 1 Last Year")) {
+                query.createdAt.$lte = endDate;
+            }
+        }
+
     }
-
-    // Define sorting
-    const sortCriteria = {};
-    if (sortBy) sortCriteria[sortBy] = sortOrder;
-
+    
     // Query database with filters and sorting
-    const filteredProducts = await Product.find(query)
-        .sort(sortCriteria)
-        .exec();
+    const filteredOrders = await Order.find(query).populate("userId","name phone email").populate("addressId").populate("items.productId").exec();
 
-    if (!filteredProducts || filteredProducts.length === 0) {
-        throw new Error("No product found matching the criteria.");
+    if (!filteredOrders || filteredOrders.length === 0) {
+        throw new Error("No orders found matching the criteria.");
     }
 
     // If a search query is provided, use js-search for in-memory searching
-    let finalResults = filteredProducts;
+    let finalResults = filteredOrders;
     
     return finalResults;
 };
@@ -296,4 +344,5 @@ module.exports = {
     getOrderById,
     updateOrderShippingStatus,
     deleteOrder,
+    getAllOrders
 };

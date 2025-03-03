@@ -1,21 +1,26 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  products: [], // This should now be an empty array initially
+  products: [],
   filters: {
     category: [],
     gender: [],
-    brand: [],
     material: [],
     color: [],
     occasion: [],
     season: [],
-    priceRange: { min: 0, max: 0 },
+    priceRange: [0, 10000],
     searchQuery: '',
-    sortBy: 'newest'
+    sortBy: '',
+    sortOrder: '',
+    isNewArrival: '',
+    isBestSeller: '',
+    isOnSale: '',
+    specialCollection: ''
   },
   loading: false,
-  error: null
+  error: null,
+  selectedProduct: null
 };
 
 const productSlice = createSlice({
@@ -23,8 +28,10 @@ const productSlice = createSlice({
   initialState,
   reducers: {
     setProducts: (state, action) => {
-      // Assuming the response has a data property with the products array
       state.products = action.payload.data || [];
+    },
+    setSelectedProduct: (state, action) => {
+      state.selectedProduct = action.payload;
     },
     setFilters: (state, action) => {
       state.filters = { ...state.filters, ...action.payload };
@@ -38,5 +45,12 @@ const productSlice = createSlice({
   }
 });
 
-export const { setProducts, setFilters, setLoading, setError } = productSlice.actions;
+export const { 
+  setProducts, 
+  setSelectedProduct,
+  setFilters, 
+  setLoading, 
+  setError 
+} = productSlice.actions;
+
 export default productSlice.reducer;

@@ -4,7 +4,7 @@ const logger = require("../configs/winston.config.js");
 // Get cart by userId
 const getCartByUserId = async (req, res, next) => {
     try {
-        const cart = await cartService.getCartByUserId(req.params.userId);
+        const cart = await cartService.getCartByUserId(req.user.id);
         res.status(200).json({success: true,
             data: cart});
     } catch (error) {
@@ -15,7 +15,7 @@ const getCartByUserId = async (req, res, next) => {
 // Add item to cart
 const addItemToCart = async (req, res, next) => {
     try {
-        const cart = await cartService.addItemToCart(req.params.userId, req.body);
+        const cart = await cartService.addItemToCart(req.user.id, req.body);
         res.status(200).json({success: true,
             data: cart});
     } catch (error) {
@@ -26,7 +26,7 @@ const addItemToCart = async (req, res, next) => {
 // Update item quantity in cart
 const updateCartItem = async (req, res, next) => {
     try {
-        const cart = await cartService.updateCartItem(req.params.userId, req.body);
+        const cart = await cartService.updateCartItem(req.user.id, req.body);
         res.status(200).json({success: true,
             data: cart});
     } catch (error) {
@@ -37,7 +37,7 @@ const updateCartItem = async (req, res, next) => {
 // Remove item from cart
 const removeCartItem = async (req, res, next) => {
     try {
-        const cart = await cartService.removeCartItem(req.params.userId, req.params.productId);
+        const cart = await cartService.removeCartItem(req.user.id, req.params.productId);
         res.status(200).json({success: true,
             data: cart});
     } catch (error) {
@@ -48,7 +48,7 @@ const removeCartItem = async (req, res, next) => {
 // Clear cart
 const clearCart = async (req, res, next) => {
     try{
-        const response = await cartService.clearCart(req.params.userId);
+        const response = await cartService.clearCart(req.user.id);
         res.status(200).json({success: true,
             data: response});
     } catch (error) {
